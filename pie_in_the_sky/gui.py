@@ -3,6 +3,7 @@
 import os.path
 import kxg, pyglet, glooey
 
+from . import world
 from . import tokens
 from . import messages
 
@@ -15,6 +16,7 @@ class Gui:
     def __init__(self):
         self.window = pyglet.window.Window()
         self.window.set_visible(True)
+        self.window.set_size(*world.World.field_size)
         self.batch = pyglet.graphics.Batch()
 
         with pyglet.resource.file('background.rgb') as file:

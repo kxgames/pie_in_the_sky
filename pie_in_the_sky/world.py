@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 
 import kxg
+from vecrec import Rect
 
 class World (kxg.World):
     """
     It's.
     """
 
+    field_size = 600, 400
+
     def __init__(self):
         super().__init__()
-
+        self.field = Rect.from_size(*self.field_size)
         self.players = []
-        self.target = None
+        self.targets = []
         self.bullets = []
 
         self.gravity_constant = 1
@@ -37,9 +40,9 @@ class World (kxg.World):
         self.calculate_motions(delta_t)
 
         if self.debug_timer >= 1:
-            kxg.info("Position = {self.target.position}")
-            kxg.info("Velocity = {self.target.velocity}")
-            kxg.info("Acceleration = {self.target.acceleration}")
+            kxg.info("Position = {self.targets[0].position}")
+            kxg.info("Velocity = {self.targets[0].velocity}")
+            kxg.info("Acceleration = {self.targets[0].acceleration}")
             kxg.info("#########################################")
 
         # Motion phase
@@ -62,7 +65,7 @@ class World (kxg.World):
         # Calculate new accelerations
         # Note, this assumes the objects have already cleared their 
         # accelerations
-        gravity_objects = [self.target] + self.bullets
+        gravity_objects = self.targets + self.bullets
         unchecked_objects = gravity_objects[:]
         for object_1 in gravity_objects:
             unchecked_objects.remove(object_1)
@@ -114,5 +117,5 @@ class World (kxg.World):
 
     @property
     def field_objects(self):
-        return [self.target] + self.bullets[:]
+        return self.targets + self.bullets[:]
 
