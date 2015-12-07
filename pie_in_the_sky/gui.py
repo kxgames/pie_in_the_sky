@@ -48,7 +48,7 @@ class GuiActor (kxg.Actor):
         self.gui = gui
         self.gui.window.set_handlers(self)
 
-    def on_start_game(self):
+    def on_start_game(self, num_players):
         self.player = tokens.Player()
         self >> messages.CreatePlayer(self.player)
 
