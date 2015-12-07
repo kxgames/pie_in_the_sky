@@ -31,11 +31,11 @@ class FieldObject(kxg.Token):
     def __init__(self, position, velocity, mass=1, collision_distance=20):
         super().__init__()
 
-        self.mass = mass
+        self.mass = float(mass)
         self.position = position
         self.velocity = velocity
         self.acceleration = Vector.null()
-        self.collision_distance = collision_distance
+        self.collision_distance = float(collision_distance)
         self.collision_distance_squared = collision_distance**2
 
         self.next_position = Vector.null()
