@@ -81,7 +81,10 @@ class HitTarget (kxg.Message):
         yield self.bullet, self.target
 
     def on_check(self, world):
-        if not self.target.has_collided(self.bullet)
+        target = self.target
+        bullet = self.bullet
+        if not target.can_collide_with(bullet) and
+           not bullet.can_collide_with(target)):
             raise kxg.MessageCheck("bullet missed")
 
     def on_execute(self, world):
