@@ -6,8 +6,8 @@ class StartGame (kxg.Message):
     Create the target.
     """
 
-    def __init__(self):
-        self.target = FieldObject()
+    def __init__(self, target_position, target_velocity):
+        self.target = FieldObject(target_position, target_velocity)
 
     def tokens_to_add(self):
         yield self.target
@@ -46,7 +46,10 @@ class ShootBullet (kxg.Message):
 
     def __init__(self, player):
         self.player = player
-        self.bullet = FieldObject(player)
+
+        position = player.init_bullet_position
+        velocity = player.init_bullet_velocity
+        self.bullet = FieldObject(position, velocity, player)
 
     def tokens_to_add(self):
         yield self.bullet
@@ -56,7 +59,7 @@ class ShootBullet (kxg.Message):
             raise kxg.MessageCheck("player has too many bullets in play")
 
     def on_execute(self, world):
-        world.add_bullet(self.bullet)
+        world.add_bullet(self.player, self.bullet)
 
 
 class SyncWorlds (kxg.Message):
@@ -82,7 +85,9 @@ class HitTarget (kxg.Message):
             raise kxg.MessageCheck("bullet missed")
 
     def on_execute(self, world):
+        world.remove_bullet(self.bullet)
         world.hit_target(self.player)
+
 
 
 

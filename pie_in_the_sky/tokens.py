@@ -1,11 +1,19 @@
 #!/usr/bin/env python
 
 import kxg
+from vecrec import Vector
 
-Class FieldObject(kxg.Token):
-    def __init__(self, player=None):
+class Player(kxg.Token):
+    def __init__(self):
+        pass
+
+
+class FieldObject(kxg.Token):
+    def __init__(self, position, velocity, player=None):
         super().__init__()
 
+        self.position = position
+        self.velocity = velocity
         self.player = player
         self.collision_distance = 20
 
