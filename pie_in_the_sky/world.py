@@ -21,12 +21,6 @@ class World (kxg.World):
 
         self.debug_timer = 0
 
-    def add_bullet(self, player, bullet):
-        self.bullets.append(bullet)
-
-    def remove_bullet(self, bullet):
-        self.bullets.remove(bullet)
-
     def hit_target(self, player):
         # End the game...
         raise NotImplementedError

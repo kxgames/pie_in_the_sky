@@ -11,6 +11,10 @@ class Player(kxg.Token):
         self.name = getuser()
         self.cannons = []
 
+    @kxg.read_only
+    def has_bullet_capacity(self, bullet):
+        return False
+
 
 class Cannon(kxg.Token):
 
@@ -18,16 +22,11 @@ class Cannon(kxg.Token):
         super().__init__()
         self.player = player
         self.position = position
-        self.init_bullet_position = 0
-        self.init_bullet_velocity = Vector.null()
+        self.muzzle_speed = 100
 
     def __extend__(self):
         from . import gui
         return {gui.GuiActor: gui.CannonExtension}
-
-    def fire_bullet(self):
-        return Bullet(
-                self, self.init_bullet_position, self.init_bullet_velocity)
 
 
 class FieldObject(kxg.Token):
@@ -84,7 +83,7 @@ class FieldObject(kxg.Token):
 class Bullet(FieldObject):
 
     def __init__(self, cannon, position, velocity):
-        super().__init__(self, position, velocity)
+        super().__init__(position, velocity)
         self.cannon = cannon
         
     def __extend__(self):

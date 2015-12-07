@@ -76,8 +76,11 @@ class ShootBullet (kxg.Message):
     Shoot a bullet
     """
 
-    def __init__(self, cannon):
-        self.bullet = cannon.fire_bullet()
+    def __init__(self, target, cannon):
+        direction = (target - cannon.position).unit
+        velocity = cannon.muzzle_speed * direction
+        position = cannon.position + 40 * direction
+        self.bullet = tokens.Bullet(cannon, position, velocity)
 
     def tokens_to_add(self):
         yield self.bullet
@@ -87,7 +90,7 @@ class ShootBullet (kxg.Message):
             raise kxg.MessageCheck("player has too many bullets in play")
 
     def on_execute(self, world):
-        world.add_bullet(self.player, self.bullet)
+        world.bullets.append(self.bullet)
 
 
 class SyncWorlds (kxg.Message):

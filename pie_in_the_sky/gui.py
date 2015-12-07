@@ -79,7 +79,8 @@ class GuiActor (kxg.Actor):
     def on_mouse_press(self, x, y, button, modifiers):
         # Send a "ShootBullet" signal when the user left-clicks.
         if button == 1:
-            self << messages.ShootBullet(self.player.cannons[0])
+            self >> messages.ShootBullet(
+                    self.focus_point, self.player.cannons[0])
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.focus_point = Vector(x, y)
