@@ -4,8 +4,23 @@ import kxg
 from vecrec import Vector
 
 class Player(kxg.Token):
+
     def __init__(self):
-        pass
+        super().__init__()
+        from getpass import getuser
+        self.name = getuser()
+
+
+class Cannon(kxg.Token):
+
+    def __init__(self, player):
+        self.player = player
+        self.init_bullet_position = 0
+        self.init_bullet_velocity = Vector.null()
+
+    def fire_bullet(self):
+        return Bullet(
+                self, self.init_bullet_position, self.init_bullet_velocity)
 
 
 class FieldObject(kxg.Token):
@@ -13,7 +28,7 @@ class FieldObject(kxg.Token):
     A base class for targets, bullets, obstacles, and other objects that are in the field of play. Instances of this base class can be used if special methods are not necessary for a type of object. This class defines default functionality for motion, collisions, and updating.
     """
 
-    def __init__(self, mass, position, velocity, collision_distance, player=None):
+    def __init__(self, mass, position, velocity, collision_distance):
         super().__init__()
 
         self.player = player
@@ -21,11 +36,16 @@ class FieldObject(kxg.Token):
         self.position = position
         self.velocity = velocity
         self.accelertation = Vector.null()
+        self.collision_distance = collision_distance
         self.collision_distance_squared = collision_distance**2
 
         self.next_position = Vector.null()
         self.next_velocity = Vector.null()
         self.next_acceleration = Vector.null()
+
+    def __extend__(self):
+        from . import gui
+        return {gui.GuiActor: gui.FieldObjectExtension}
 
     def can_collide_with(self, object):
         distance_squared = self.calculate_distance_squared(object)
@@ -57,4 +77,29 @@ class FieldObject(kxg.Token):
         self.next_position = Vector.null()
         self.next_velocity = Vector.null()
         self.next_acceleration = Vector.null()
+
+
+class Bullet(FieldObject):
+
+    def __init__(self, cannon, position, velocity):
+        super().__init__(self, position, velocity)
+        self.cannon = cannon
+        
+    def __extend__(self):
+        from . import gui
+        return {gui.GuiActor: gui.BulletExtension}
+
+    @property
+    def player(self):
+        return self.cannon.player
+
+
+class Target(FieldObject):
+
+    def __init__(self, position, velocity):
+        super().__init__(position, velocity)
+        
+    def __extend__(self):
+        from . import gui
+        return {gui.GuiActor: gui.TargetExtension}
 

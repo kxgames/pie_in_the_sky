@@ -16,9 +16,6 @@ class World (kxg.World):
 
         self.gravity_constant = 1
 
-    def add_player(self, player):
-        self._players.append(player)
-
     def add_bullet(self, player, bullet):
         self._bullets.append(bullet)
 
@@ -103,14 +100,6 @@ class World (kxg.World):
         return collision_pairs
 
     @property
-    def bullets(self):
-        yield self._bullets
-    
-    @property
     def field_objects(self):
         yield [self._target] + self._bullets
-
-    @property
-    def hittable_objects(self):
-        yield self.field_objects
 
