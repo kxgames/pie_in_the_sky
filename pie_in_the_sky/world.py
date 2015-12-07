@@ -10,9 +10,6 @@ class World (kxg.World):
         self.target = None
         self.bullets = []
 
-    def add_player(self, player):
-        self.players.append(player)
-
     def add_bullet(self, player, bullet):
         self.bullets.append(bullet)
 

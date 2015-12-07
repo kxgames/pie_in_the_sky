@@ -6,7 +6,9 @@ from vecrec import Vector
 class Player(kxg.Token):
 
     def __init__(self):
-        pass
+        super().__init__()
+        from getpass import getuser
+        self.name = getuser()
 
 
 class Cannon(kxg.Token):

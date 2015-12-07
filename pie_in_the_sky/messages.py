@@ -31,14 +31,13 @@ class CreatePlayer (kxg.Message):
 
     def tokens_to_add(self):
         yield self.player
-        yield from player.cannons
 
     def on_check(self, world):
         if self.player in world.players:
             raise kxg.MessageCheck("player already exists")
 
     def on_execute(self, world):
-        world.add_player(self.player)
+        world.players.append(self.player)
 
 
 class ShootBullet (kxg.Message):

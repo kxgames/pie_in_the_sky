@@ -50,7 +50,7 @@ class GuiActor (kxg.Actor):
 
     def on_start_game(self):
         self.player = tokens.Player()
-        #self << messages.CreatePlayer(self.player)
+        self >> messages.CreatePlayer(self.player)
 
     def on_draw(self):
         self.gui.on_refresh_gui()
