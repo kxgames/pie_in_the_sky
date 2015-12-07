@@ -10,35 +10,36 @@ class World (kxg.World):
     def __init__(self):
         super().__init__()
 
-        self._players = []
-        self._target = None
-        self._bullets = []
+        self.players = []
+        self.target = None
+        self.bullets = []
 
         self.gravity_constant = 1
 
     def add_bullet(self, player, bullet):
-        self._bullets.append(bullet)
+        self.bullets.append(bullet)
 
     def remove_bullet(self, bullet):
-        self._bullets.remove(bullet)
+        self.bullets.remove(bullet)
 
     def hit_target(self, player):
         # End the game...
         raise NotImplementedError
 
-    def on_update_game(delta_t):
+    def on_update_game(self, delta_t):
         
-        # Calculate motion phase
-        self.calculate_motions(delta_t)
+        pass
+        ## Calculate motion phase
+        #self.calculate_motions(delta_t)
 
-        # Motion phase
-        for field_object in self.field_objects:
-            field_object.move()
+        ## Motion phase
+        #for field_object in self.field_objects:
+        #    field_object.move()
 
-        # Collision detection phase
-        colliding_pairs = self.detect_collisions()
+        ## Collision detection phase
+        #colliding_pairs = self.detect_collisions()
 
-        # Collision handling phase
+        ## Collision handling phase
 
     def calculate_motions(self, delta_t):
         """ 
@@ -48,7 +49,7 @@ class World (kxg.World):
         # Calculate new accelerations
         # Note, this assumes the objects have already cleared their 
         # accelerations
-        gravity_objects = [self._target] + self._bullets
+        gravity_objects = [self.target] + self.bullets
         unchecked_objects = gravity_objects[:]
         for object_1 in gravity_objects:
             unchecked_objects.remove(object_A)
@@ -81,7 +82,7 @@ class World (kxg.World):
         
         collision_pairs = []
 
-        unchecked_bullets = self._bullets[:]
+        unchecked_bullets = self.bullets[:]
         # Check all hittable objects to see if any can hit or be hit by any 
         # bullet. (They may have different collision distances.)
         for hittable in self.hittable_objects:
@@ -93,13 +94,12 @@ class World (kxg.World):
                 unchecked_bullets.remove(hittable)
 
             for bullet in unchecked_bullets:
-                if   hittable.can_collide_with(bullet)
-                  or bullet.can_collide_with(hittable): 
+                if hittable.can_collide_with(bullet) or bullet.can_collide_with(hittable): 
                     collision_pairs.append(hittable, bullet)
                     
         return collision_pairs
 
     @property
     def field_objects(self):
-        yield [self._target] + self._bullets
+        yield [self.target] + self.bullets
 

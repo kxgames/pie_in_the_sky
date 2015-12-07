@@ -28,10 +28,9 @@ class FieldObject(kxg.Token):
     A base class for targets, bullets, obstacles, and other objects that are in the field of play. Instances of this base class can be used if special methods are not necessary for a type of object. This class defines default functionality for motion, collisions, and updating.
     """
 
-    def __init__(self, mass, position, velocity, collision_distance):
+    def __init__(self, position, velocity, mass=1, collision_distance=20):
         super().__init__()
 
-        self.player = player
         self.mass = mass
         self.position = position
         self.velocity = velocity
