@@ -23,10 +23,10 @@
      pagecolor="#073642"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="1"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="-20.9032"
+     inkscape:cx="-200.9032"
      inkscape:cy="6.8722435"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -65,7 +65,9 @@
        inkscape:export-ydpi="90" />
     <g
        id="g4178"
-       transform="translate(-24,-89)">
+       transform="translate(-24,-89)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <circle
          style="opacity:1;fill:#dc322f;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="circle3372"
@@ -91,5 +93,22 @@
          id="path3336-3"
          style="opacity:1;fill:#dc322f;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
+    <circle
+       style="opacity:1;fill:#b58900;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path3340"
+       cx="-196"
+       cy="1021.3622"
+       r="25"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#b58900;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3342"
+       width="40"
+       height="10"
+       x="-213"
+       y="1067.3622"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>

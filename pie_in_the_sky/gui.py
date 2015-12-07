@@ -2,6 +2,7 @@
 
 import os.path
 import kxg, pyglet, glooey
+from vecrec import Vector
 
 from . import world
 from . import tokens
@@ -19,9 +20,13 @@ class Gui:
         self.window.set_size(*world.World.field_size)
         self.batch = pyglet.graphics.Batch()
 
+        # Load the background color from a resource file.
+
         with pyglet.resource.file('background.rgb') as file:
             bg_color_hex = file.read().decode().strip()
             self.bg_color = glooey.drawing.hex_to_float(bg_color_hex)
+
+        # Load all the sprite images from resource files.
 
         self.images = {
                 'bullet': pyglet.resource.image('bullet.png'),
@@ -30,9 +35,14 @@ class Gui:
                 'cannon-muzzle': pyglet.resource.image('cannon_muzzle.png'),
         }
 
+        # Center all the images except the cannon muzzle, which we will want to 
+        # rotate around it's leftmost edge.
+
         for image in self.images.values():
             image.anchor_x = image.width / 2
             image.anchor_y = image.height / 2
+
+        self.images['cannon-muzzle'].anchor_x = 0
 
     def on_refresh_gui(self):
         pyglet.gl.glClearColor(*self.bg_color)
@@ -53,6 +63,7 @@ class GuiActor (kxg.Actor):
     def __init__(self):
         super().__init__()
         self.player = None
+        self.focus_point = Vector.null()
 
     def on_setup_gui(self, gui):
         self.gui = gui
@@ -71,7 +82,7 @@ class GuiActor (kxg.Actor):
             self << messages.ShootBullet(self.player.cannons[0])
 
     def on_mouse_motion(self, x, y, dx, dy):
-        pass
+        self.focus_point = Vector(x, y)
 
 
 
@@ -84,7 +95,20 @@ class CannonExtension (kxg.TokenExtension):
                 x=self.token.position.x,
                 y=self.token.position.y,
                 batch=self.actor.gui.batch,
+                group=pyglet.graphics.OrderedGroup(1),
         )
+        self.muzzle = pyglet.sprite.Sprite(
+                self.actor.gui.images['cannon-muzzle'],
+                x=self.token.position.x,
+                y=self.token.position.y,
+                batch=self.actor.gui.batch,
+                group=pyglet.graphics.OrderedGroup(0),
+        )
+
+    @kxg.watch_token
+    def on_update_game(self, dt):
+        focus_vector = self.actor.focus_point - self.token.position
+        self.muzzle.rotation = focus_vector.get_degrees_to((1, 0))
 
     @kxg.watch_token
     def on_remove_from_world(self, world):
