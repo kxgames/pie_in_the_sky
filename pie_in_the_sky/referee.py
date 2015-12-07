@@ -20,7 +20,7 @@ class Referee (kxg.Referee):
         if num_players_joined == self.num_players_expected:
             from vecrec import Vector
             position = Vector(100, 100)
-            velocity = Vector.null()
+            velocity = Vector(10, 10)
             self >> messages.StartGame(position, velocity)
 
 

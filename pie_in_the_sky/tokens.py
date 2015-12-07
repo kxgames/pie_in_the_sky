@@ -34,7 +34,7 @@ class FieldObject(kxg.Token):
         self.mass = mass
         self.position = position
         self.velocity = velocity
-        self.accelertation = Vector.null()
+        self.acceleration = Vector.null()
         self.collision_distance = collision_distance
         self.collision_distance_squared = collision_distance**2
 

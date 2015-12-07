@@ -88,6 +88,10 @@ class FieldObjectExtension (kxg.TokenExtension):
         )
 
     @kxg.watch_token
+    def on_update_game(self, delta_t):
+        self.sprite.position = self.token.position
+
+    @kxg.watch_token
     def on_remove_from_world(self, world):
         self.sprite.delete()
 
