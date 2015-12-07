@@ -18,6 +18,6 @@ class Referee (kxg.Referee):
         kxg.info("{num_players_joined} of {self.num_players_expected} players created.")
 
         if num_players_joined == self.num_players_expected:
-            self >> messages.StartGame(self.world.field)
+            self >> messages.StartGame(self.world)
 
 

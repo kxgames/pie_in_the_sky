@@ -9,14 +9,21 @@ class Player(kxg.Token):
         super().__init__()
         from getpass import getuser
         self.name = getuser()
+        self.cannons = []
 
 
 class Cannon(kxg.Token):
 
-    def __init__(self, player):
+    def __init__(self, player, position):
+        super().__init__()
         self.player = player
+        self.position = position
         self.init_bullet_position = 0
         self.init_bullet_velocity = Vector.null()
+
+    def __extend__(self):
+        from . import gui
+        return {gui.GuiActor: gui.CannonExtension}
 
     def fire_bullet(self):
         return Bullet(
@@ -41,10 +48,6 @@ class FieldObject(kxg.Token):
         self.next_position = Vector.null()
         self.next_velocity = Vector.null()
         self.next_acceleration = Vector.null()
-
-    def __extend__(self):
-        from . import gui
-        return {gui.GuiActor: gui.FieldObjectExtension}
 
     def can_collide_with(self, object):
         distance_squared = self.calculate_distance_squared(object)

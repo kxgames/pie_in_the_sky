@@ -23,8 +23,16 @@ class Gui:
             bg_color_hex = file.read().decode().strip()
             self.bg_color = glooey.drawing.hex_to_float(bg_color_hex)
 
-        self.bullet_image = pyglet.resource.image('bullet.png')
-        self.target_image = pyglet.resource.image('target.png')
+        self.images = {
+                'bullet': pyglet.resource.image('bullet.png'),
+                'target': pyglet.resource.image('target.png'),
+                'cannon-base': pyglet.resource.image('cannon_base.png'),
+                'cannon-muzzle': pyglet.resource.image('cannon_muzzle.png'),
+        }
+
+        for image in self.images.values():
+            image.anchor_x = image.width / 2
+            image.anchor_y = image.height / 2
 
     def on_refresh_gui(self):
         pyglet.gl.glClearColor(*self.bg_color)
@@ -60,7 +68,7 @@ class GuiActor (kxg.Actor):
     def on_mouse_press(self, x, y, button, modifiers):
         # Send a "ShootBullet" signal when the user left-clicks.
         if button == 1:
-            self << messages.ShootBullet(self.player)
+            self << messages.ShootBullet(self.player.cannons[0])
 
     def on_mouse_motion(self, x, y, dx, dy):
         pass
@@ -71,7 +79,12 @@ class CannonExtension (kxg.TokenExtension):
 
     @kxg.watch_token
     def on_add_to_world(self, world):
-        pass
+        self.base = pyglet.sprite.Sprite(
+                self.actor.gui.images['cannon-base'],
+                x=self.token.position.x,
+                y=self.token.position.y,
+                batch=self.actor.gui.batch,
+        )
 
     @kxg.watch_token
     def on_remove_from_world(self, world):
@@ -83,7 +96,7 @@ class FieldObjectExtension (kxg.TokenExtension):
     @kxg.watch_token
     def on_add_to_world(self, world):
         self.sprite = pyglet.sprite.Sprite(
-                self.image,
+                self.actor.gui.images[self.image],
                 x=self.token.position.x,
                 y=self.token.position.y,
                 batch=self.actor.gui.batch,
@@ -95,17 +108,9 @@ class FieldObjectExtension (kxg.TokenExtension):
 
 
 class BulletExtension (FieldObjectExtension):
-
-    @property
-    def image(self):
-        return self.actor.gui.bullet_image
-
+    image = 'bullet'
 
 class TargetExtension (FieldObjectExtension):
-
-    @property
-    def image(self):
-        return self.actor.gui.target_image
-
+    image = 'target'
 
 
