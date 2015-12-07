@@ -14,9 +14,13 @@ class StartGame (kxg.Message):
         # Create the target and give it a somewhat random initial position and 
         # velocity.
 
-        position = field.center + Vector.random(field.height/4)
+        rvec = Vector.random(field.height/4)
+        position = field.center + rvec
         velocity = Vector.random(10)
-        self.target = tokens.Target(position, velocity)
+        self.target1 = tokens.Target(position, velocity)
+
+        position = field.center - rvec
+        self.target2 = tokens.Target(position, -velocity)
 
         # Create a cannon for each player and decide which side of the field 
         # each one should go on.
@@ -37,7 +41,8 @@ class StartGame (kxg.Message):
             raise ValueError("Must have either 1 or 2 players")
 
     def tokens_to_add(self):
-        yield self.target
+        yield self.target1
+        yield self.target2
         yield from self.cannons
 
     def on_check(self, world):
@@ -45,7 +50,7 @@ class StartGame (kxg.Message):
             raise kxg.MessageCheck("target already exists")
 
     def on_execute(self, world):
-        world.targets = [self.target]
+        world.targets = [self.target1, self.target2]
 
         for cannon in self.cannons:
             player = cannon.player

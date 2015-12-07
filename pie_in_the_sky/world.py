@@ -17,7 +17,7 @@ class World (kxg.World):
         self.targets = []
         self.bullets = []
 
-        self.gravity_constant = 1
+        self.gravity_constant = 10.0**5
 
         self.debug_timer = 0
 
@@ -32,12 +32,6 @@ class World (kxg.World):
         self.debug_timer += delta_t
         # Calculate motion phase
         self.calculate_motions(delta_t)
-
-        if self.debug_timer >= 1:
-            kxg.info("Position = {self.targets[0].position}")
-            kxg.info("Velocity = {self.targets[0].velocity}")
-            kxg.info("Acceleration = {self.targets[0].acceleration}")
-            kxg.info("#########################################")
 
         # Motion phase
         for field_object in self.field_objects:
@@ -64,20 +58,22 @@ class World (kxg.World):
         for object_1 in gravity_objects:
             unchecked_objects.remove(object_1)
             for object_2 in unchecked_objects:
-                m1 = object1.mass
-                p1 = object1.position
-                m2 = object2.mass
-                p2 = object2.position
+                m1 = object_1.mass
+                p1 = object_1.position
+                m2 = object_2.mass
+                p2 = object_2.position
                 G = self.gravity_constant
 
-                distance = p1 - p2
-                partial_force = G / distance.magnitude
+                distance = p2 - p1
+                distance_unit = distance.get_unit()
+                partial_force = G * distance.unit / distance.magnitude_squared
 
                 a1 = m2 * partial_force
-                a2 = m1 * partial_force
+                a2 = m1 * -partial_force
 
                 object_1.add_next_acceleration(a1)
                 object_2.add_next_acceleration(a2)
+
         
         # Calculate new velocities and positions based on the new 
         # accelerations.
