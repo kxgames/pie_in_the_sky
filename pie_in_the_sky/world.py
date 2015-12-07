@@ -19,6 +19,8 @@ class World (kxg.World):
 
         self.gravity_constant = 1
 
+        self.debug_timer = 0
+
     def add_bullet(self, player, bullet):
         self.bullets.append(bullet)
 
@@ -30,14 +32,25 @@ class World (kxg.World):
         raise NotImplementedError
 
     def on_update_game(self, delta_t):
-        
-        pass
-        ## Calculate motion phase
-        #self.calculate_motions(delta_t)
 
-        ## Motion phase
-        #for field_object in self.field_objects:
-        #    field_object.move()
+        super().on_update_game(delta_t)
+
+        self.debug_timer += delta_t
+        # Calculate motion phase
+        self.calculate_motions(delta_t)
+
+        if self.debug_timer >= 1:
+            kxg.info("Position = {self.targets[0].position}")
+            kxg.info("Velocity = {self.targets[0].velocity}")
+            kxg.info("Acceleration = {self.targets[0].acceleration}")
+            kxg.info("#########################################")
+
+        # Motion phase
+        for field_object in self.field_objects:
+            field_object.move()
+
+        if self.debug_timer >= 1:
+            self.debug_timer -= 1
 
         ## Collision detection phase
         #colliding_pairs = self.detect_collisions()
@@ -52,10 +65,10 @@ class World (kxg.World):
         # Calculate new accelerations
         # Note, this assumes the objects have already cleared their 
         # accelerations
-        gravity_objects = [self.target] + self.bullets
+        gravity_objects = self.targets + self.bullets
         unchecked_objects = gravity_objects[:]
         for object_1 in gravity_objects:
-            unchecked_objects.remove(object_A)
+            unchecked_objects.remove(object_1)
             for object_2 in unchecked_objects:
                 m1 = object1.mass
                 p1 = object1.position
@@ -104,5 +117,5 @@ class World (kxg.World):
 
     @property
     def field_objects(self):
-        yield [self.target] + self.bullets
+        return self.targets + self.bullets[:]
 
