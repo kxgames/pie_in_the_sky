@@ -7,18 +7,38 @@ class StartGame (kxg.Message):
     Create the target.
     """
 
-    def __init__(self, target_position, target_velocity):
-        self.target = tokens.Target(target_position, target_velocity)
+    def __init__(self, field):
+        from vecrec import Vector
+
+        # Create the target and give it a somewhat random initial position and 
+        # velocity.
+
+        position = field.center + Vector.random(field.height/4)
+        velocity = Vector.random(10)
+        self.target = tokens.Target(position, velocity)
+
+        # Create a cannon for each player and decide which side of the field 
+        # each one should go on.
+
+        #self.cannons = []
+
+        #if num_players == 1:
+        #    cannon = 
+        #for i in range(num_players):
+        #    cannon = tokens.Cannon()
+
 
     def tokens_to_add(self):
         yield self.target
 
     def on_check(self, world):
-        if world.target:
+        if world.targets:
             raise kxg.MessageCheck("target already exists")
 
     def on_execute(self, world):
-        world.target = self.target
+        world.targets = [self.target]
+
+
 
 
 class CreatePlayer (kxg.Message):

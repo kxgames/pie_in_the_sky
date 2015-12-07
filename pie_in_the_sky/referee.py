@@ -18,9 +18,6 @@ class Referee (kxg.Referee):
         kxg.info("{num_players_joined} of {self.num_players_expected} players created.")
 
         if num_players_joined == self.num_players_expected:
-            from vecrec import Vector
-            position = Vector(100, 100)
-            velocity = Vector.null()
-            self >> messages.StartGame(position, velocity)
+            self >> messages.StartGame(self.world.field)
 
 
