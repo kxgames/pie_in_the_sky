@@ -1,2 +1,3 @@
 #!/usr/bin/env sh
 deactivate 2>/dev/null
+unalias pie
