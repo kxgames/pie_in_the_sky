@@ -70,6 +70,19 @@ class FieldObject(kxg.Token):
         self.next_position = p + dp
         self.next_velocity = v + dv
 
+        self.check_wall_bounce()
+
+    def check_wall_bounce(self):
+        field = self.world.field
+        x, y = self.next_position.tuple
+
+        if x <= field.left or x >= field.right:
+            # Flip the x velocity
+            self.next_velocity *= Vector(-1, 1)
+        if y <= field.bottom or y >= field.top:
+            # Flip the y velocity
+            self.next_velocity *= Vector(1, -1)
+
     def move(self):
         self.position = self.next_position
         self.velocity = self.next_velocity
