@@ -12,14 +12,6 @@ with open('pie_in_the_sky/metadata.py') as metadata_file:
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
-requirements = [
-        'kxg',
-]
-
-test_requirements = [
-]
-
-
 setup(
     name='pie_in_the_sky',
     version=__version__,
@@ -37,7 +29,12 @@ setup(
         ],
     },
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=[
+        'kxg',
+        'vecrec',
+        'glooey',
+        'nonstdlib',
+    ],
     license='GPLv3',
     zip_safe=False,
     keywords=[
@@ -54,6 +51,4 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Topic :: Games/Entertainment',
     ],
-    test_suite='tests',
-    tests_require=test_requirements
 )
