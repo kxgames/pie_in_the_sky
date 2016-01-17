@@ -14,7 +14,7 @@ class Player(kxg.Token):
         self.max_arsenal = 6
         self.arsenal = self.max_arsenal
         self._arsenal = float(self.max_arsenal)
-        self.arsenal_recharge_rate = 1
+        self.arsenal_recharge_rate = 1/2
 
     @kxg.read_only
     def can_shoot(self, bullet):
@@ -170,7 +170,7 @@ class Bullet(FieldObject):
 class Target(FieldObject):
 
     def __init__(self, position, velocity):
-        super().__init__(position, velocity, mass=10, radius=15)
+        super().__init__(position, velocity, mass=2, radius=15)
         
     def __extend__(self):
         from . import gui
@@ -183,3 +183,22 @@ class Target(FieldObject):
 
     def on_remove_from_world(self):
         self.world.targets.remove(self)
+
+
+class Obstacle(FieldObject):
+
+    def __init__(self, position, velocity):
+        super().__init__(position, velocity, mass=10, radius=20)
+
+    def __extend__(self):
+        from . import gui
+        return {gui.GuiActor: gui.ObstacleExtension}
+
+    @kxg.read_only
+    def on_hit_by_bullet(self, reporter, bullet):
+        from . import messages
+        reporter >> messages.HitObstacle(bullet, self)
+
+    def on_remove_from_world(self):
+        self.world.obstacles.remove(self)
+

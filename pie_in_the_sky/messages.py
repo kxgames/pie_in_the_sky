@@ -11,8 +11,8 @@ class StartGame (kxg.Message):
         from vecrec import Vector
         field = world.field
 
-        # Create the target and give it a somewhat random initial position and 
-        # velocity.
+        # Create a few targets and give them somewhat random initial positions 
+        # and velocities.
 
         random_offset = Vector.random(field.height/4)
         random_velocity = Vector.random(10)
@@ -21,6 +21,15 @@ class StartGame (kxg.Message):
                 tokens.Target(field.center + random_offset, random_velocity),
                 tokens.Target(field.center - random_offset, -random_velocity),
         ]
+
+        # Create a few obstacles in the same way.
+
+        #self.obstacles = [
+        #        tokens.Obstacle(
+        #            field.center + Vector.random(field.height / 3),
+        #            Vector.random(10))
+        #        for i in range(3)
+        #]
 
         # Create a cannon for each player and decide which side of the field 
         # each one should go on.
@@ -37,6 +46,7 @@ class StartGame (kxg.Message):
 
     def tokens_to_add(self):
         yield from self.targets
+        yield from self.obstacles
         yield from self.cannons
 
     def on_check(self, world):
@@ -45,6 +55,7 @@ class StartGame (kxg.Message):
 
     def on_execute(self, world):
         world.targets = self.targets
+        world.obstacles = self.obstacles
 
         for cannon in self.cannons:
             player = cannon.player
@@ -124,6 +135,25 @@ class HitTarget (kxg.Message):
     def tokens_to_remove(self):
         yield self.bullet
         yield self.target
+
+    def on_check(self, world):
+        pass
+
+    def on_execute(self, world):
+        pass
+
+
+class HitObstacle (kxg.Message):
+    """
+    Hit a target or a power-up with a bullet. 
+    """
+
+    def __init__(self, bullet, obstacle):
+        self.bullet = bullet
+        self.obstacle = obstacle
+
+    def tokens_to_remove(self):
+        yield self.bullet
 
     def on_check(self, world):
         pass

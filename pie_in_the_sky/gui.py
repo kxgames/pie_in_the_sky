@@ -29,6 +29,7 @@ class Gui:
                 'bullet': pyglet.resource.image('bullet.png'),
                 'empty_bullet': pyglet.resource.image('empty_bullet.png'),
                 'target': pyglet.resource.image('target.png'),
+                'obstacle': pyglet.resource.image('obstacle.png'),
                 'cannon-base': pyglet.resource.image('cannon_base.png'),
                 'cannon-muzzle': pyglet.resource.image('cannon_muzzle.png'),
         }
@@ -208,5 +209,8 @@ class BulletExtension (FieldObjectExtension):
 
 class TargetExtension (FieldObjectExtension):
     image = 'target'
+
+class ObstacleExtension (FieldObjectExtension):
+    image = 'obstacle'
 
 

@@ -9,24 +9,26 @@ class World (kxg.World):
     """
 
     field_size = 600, 400
+    gravity_constant = 10.0**5
 
     def __init__(self):
         super().__init__()
         self.field = Rect.from_size(*self.field_size)
         self.players = []
-        self.targets = []
         self.bullets = []
-
-        self.gravity_constant = 10.0**5
+        self.targets = []
+        self.obstacles = []
 
     @property
     def field_objects(self):
-        yield from self.targets
         yield from self.bullets
+        yield from self.targets
+        yield from self.obstacles
 
     @property
     def non_bullets(self):
         yield from self.targets
+        yield from self.obstacles
 
     def hit_target(self, player):
         # End the game...
