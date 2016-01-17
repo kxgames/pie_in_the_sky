@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import kxg
-from . import messages
+from . import messages, tokens
 
 class Referee (kxg.Referee):
 
@@ -12,6 +12,39 @@ class Referee (kxg.Referee):
     def on_start_game(self, num_players):
         self.num_players_expected = num_players
 
+        self.world.space.add_collision_handler(
+                tokens.Bullet.collision_type,
+                tokens.Bullet.collision_type,
+                post_solve=self.on_hit_bullet,
+        )
+        self.world.space.add_collision_handler(
+                tokens.Bullet.collision_type,
+                tokens.Target.collision_type,
+                post_solve=self.on_hit_target,
+        )
+        self.world.space.add_collision_handler(
+                tokens.Bullet.collision_type,
+                tokens.Obstacle.collision_type,
+                post_solve=self.on_hit_obstacle,
+        )
+
+    def on_hit_bullet(self, space, arbiter):
+        bullet = arbiter.shapes[0].token
+        other_bullet = arbiter.shapes[1].token
+        self >> messages.HitBullet(bullet, other_bullet)
+
+    def on_hit_target(self, space, arbiter):
+        bullet = arbiter.shapes[0].token
+        target = arbiter.shapes[1].token
+        self >> messages.HitTarget(bullet, target)
+        if not bullet.player.targets and target.is_black_ball:
+            self >> messages.EndGame(bullet.player)
+
+    def on_hit_obstacle(self, space, arbiter):
+        bullet = arbiter.shapes[0].token
+        obstacle = arbiter.shapes[1].token
+        self >> messages.HitObstacle(bullet, obstacle)
+
     @kxg.subscribe_to_message(messages.CreatePlayer)
     def on_create_player(self, message):
         num_players_joined = len(self.world.players)
@@ -20,10 +53,9 @@ class Referee (kxg.Referee):
         if num_players_joined == self.num_players_expected:
             self >> messages.StartGame(self.world)
 
-    @kxg.subscribe_to_message(messages.HitTarget)
-    def on_hit_target(self, message):
-        if message.target and message.target.is_black_ball:
-            self >> messages.EndGame(message.shooter)
 
-
+def on_hit_bullet(space, arbiter, reporter):
+    bullet = arbiter.shapes[0].token
+    other_bullet = arbiter.shapes[1].token
+    reporter >> messages.HitBullet(bullet, other_bullet)
 

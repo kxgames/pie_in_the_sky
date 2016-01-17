@@ -14,7 +14,8 @@ class StartGame (kxg.Message):
         def random_position():
             return field.center + Vector.random(0.4*field.height)
         def random_velocity():
-            return Vector.random(10)
+            return Vector.null()
+            #return Vector.random(10)
 
         # Create a few obstacles in the same way.
 

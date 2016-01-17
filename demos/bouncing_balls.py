@@ -9,7 +9,7 @@ fps_display = pyglet.clock.ClockDisplay()
 space = pymunk.Space()
 space.gravity = 0,-100
 
-def make_walls(window, space, elasticity=0.95):
+def make_walls(window, space, elasticity=1):
     w, h = window.get_size()
     static_body = pymunk.Body()
     walls = [
@@ -23,7 +23,7 @@ def make_walls(window, space, elasticity=0.95):
     space.add(walls)
     return walls
 
-def make_ball(window, space, mass=10, radius=25, elasticity=0.95):
+def make_ball(window, space, mass=10, radius=25, elasticity=1):
     inertia = pymunk.moment_for_circle(mass, 0, radius, (0,0))
     body = pymunk.Body(mass, inertia)
     x = window.width * random.random()

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import kxg
+import kxg, pymunk
 from vecrec import Vector
 
 class Player(kxg.Token):
@@ -23,7 +23,6 @@ class Player(kxg.Token):
     def remove_target(self, target):
         self.targets.remove(target)
 
-
     @kxg.read_only
     def can_shoot(self, bullet):
         return bullet.mass <= self.arsenal
@@ -42,7 +41,6 @@ class Player(kxg.Token):
             self.arsenal = int(self._arsenal)
             if self._arsenal > self.max_arsenal:
                 self._arsenal = self.max_arsenal
-
 
 
 class Cannon(kxg.Token):
@@ -66,94 +64,41 @@ class FieldObject(kxg.Token):
     def __init__(self, position, velocity, mass=1, radius=20):
         super().__init__()
 
-        self.mass = int(mass)
-        self.position = position
-        self.velocity = velocity
-        self.acceleration = Vector.null()
-        self.radius = float(radius)
-        self.vulnerable_to_bullets = True
+        inertia = pymunk.moment_for_circle(mass, 0, radius, (0,0))
+        self.body = pymunk.Body(int(mass), inertia)
+        self.body.position = position.xy
+        self.body.velocity = velocity.xy
+        self.shape = pymunk.Circle(self.body, radius, (0,0))
+        self.shape.collision_type = self.collision_type
+        self.shape.token = self
+    
+    @property
+    def mass(self):
+        return int(self.body.mass)
 
-        self.next_position = Vector.null()
-        self.next_velocity = Vector.null()
-        self.next_acceleration = Vector.null()
+    @property
+    def radius(self):
+        return self.shape.radius
 
-    def move(self):
-        self.position = self.next_position
-        self.velocity = self.next_velocity
-        self.acceleration = self.next_acceleration
+    @property
+    def position(self):
+        import vecrec
+        return vecrec.cast_anything_to_vector(self.body.position)
 
-        self.next_position = Vector.null()
-        self.next_velocity = Vector.null()
-        self.next_acceleration = Vector.null()
+    def on_add_to_world(self, world):
+        self.shape.elasticity = world.elasticity_constant
+        world.space.add(self.body, self.shape)
 
-    def bounce(self, other):
-        # Define the x-axis to coincide with the line between the centers of 
-        # the two colliding objects and the y-axis to be orthogonal to the 
-        # x-axis.  The x component of the velocities will bounce as if this 
-        # were a 1D problem, and the y components will not change.
-
-        offset = other.position - self.position
-        distance = offset.magnitude
-
-        x = offset.unit
-        y = x.orthogonal
-
-        v1x = self.velocity.dot(x)
-        v1y = self.velocity.dot(y)
-        v2x = other.velocity.dot(x)
-        v2y = other.velocity.dot(y)
-
-        # Calculate the new velocities using the equations for a 1D elastic 
-        # collision.
-
-        m1, m2 = self.mass, other.mass
-
-        v1x_final = v1x * (m1 - m2) / (m2 + m1) + v2x * (2 * m2) / (m2 + m1)
-        v2x_final = v1x * (2 * m1) / (m1 + m2) + v2x * (m2 - m1) / (m1 + m2)
-
-        # Set the final velocities by summing the x and y components of the 
-        # velocity.
-
-        self.velocity = y * v1y +  x * v1x_final
-        other.velocity = y * v2y + x * v2x_final
-
-    @kxg.read_only
-    def is_touching(self, other):
-        offset = self.position - other.position
-        return offset.magnitude < self.radius + other.radius
+    def on_remove_from_world(self):
+        self.world.space.remove(self.body, self.shape)
 
     def on_hit_by_bullet(self, bullet):
         pass
 
-    def add_next_acceleration(self, acceleration):
-        self.next_acceleration += acceleration
-
-    def calculate_motion(self, dt):
-        p = self.position
-        v = self.velocity
-        a = self.next_acceleration
-
-        dv = a * dt
-        dp = (v + dv) * dt
-
-        self.next_position = p + dp
-        self.next_velocity = v + dv
-
-        self.check_wall_bounce()
-
-    def check_wall_bounce(self):
-        field = self.world.field
-        x, y = self.next_position.tuple
-
-        if x <= field.left or x >= field.right:
-            # Flip the x velocity
-            self.next_velocity *= Vector(-1, 1)
-        if y <= field.bottom or y >= field.top:
-            # Flip the y velocity
-            self.next_velocity *= Vector(1, -1)
-
 
 class Bullet(FieldObject):
+
+    collision_type = 1
 
     def __init__(self, cannon, position, velocity):
         super().__init__(position, velocity, mass=1, radius=5)
@@ -167,15 +112,14 @@ class Bullet(FieldObject):
     def player(self):
         return self.cannon.player
 
-    @kxg.read_only
-    def on_hit_by_bullet(self, reporter, bullet):
-        from . import messages
-        reporter >> messages.HitBullet(bullet, self)
-
     def on_remove_from_world(self):
+        super().on_remove_from_world()
         self.world.bullets.remove(self)
 
+
 class Target(FieldObject):
+
+    collision_type = 2
 
     def __init__(self, position, velocity, owner=None):
         super().__init__(position, velocity, mass=2, radius=15)
@@ -189,29 +133,23 @@ class Target(FieldObject):
     def is_black_ball(self):
         return self.owner is None
 
-    @kxg.read_only
-    def on_hit_by_bullet(self, reporter, bullet):
-        from . import messages
-        reporter >> messages.HitTarget(bullet, self)
-
     def on_remove_from_world(self):
+        super().on_remove_from_world()
         self.world.targets.remove(self)
 
 
 class Obstacle(FieldObject):
 
+    collision_type = 3
+
     def __init__(self, position, velocity):
-        super().__init__(position, velocity, mass=-5, radius=20)
+        super().__init__(position, velocity, mass=5, radius=20)
 
     def __extend__(self):
         from . import gui
         return {gui.GuiActor: gui.ObstacleExtension}
 
-    @kxg.read_only
-    def on_hit_by_bullet(self, reporter, bullet):
-        from . import messages
-        reporter >> messages.HitObstacle(bullet, self)
-
     def on_remove_from_world(self):
+        super().on_remove_from_world()
         self.world.obstacles.remove(self)
 
