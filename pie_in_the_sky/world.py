@@ -62,15 +62,15 @@ class World (kxg.World):
 
         G = self.gravity_constant
 
+        for obj in self.field_objects:
+            obj.body.reset_forces()
+
+        for obj_1, obj_2 in itertools.combinations(self.field_objects, 2):
+            dist = obj_2.position - obj_1.position
+            force = G * obj_1.mass * obj_2.mass * dist.unit / dist.magnitude_squared
+            obj_1.body.apply_force(force.xy, (0,0))
+            obj_2.body.apply_force((-force).xy, (0,0))
+
         for i in range(10):
-            for obj in self.field_objects:
-                obj.body.reset_forces()
-
-            for obj_1, obj_2 in itertools.combinations(self.field_objects, 2):
-                dist = obj_2.position - obj_1.position
-                force = G * obj_1.mass * obj_2.mass * dist.unit / dist.magnitude_squared
-                obj_1.body.apply_force(force.xy, (0,0))
-                obj_2.body.apply_force((-force).xy, (0,0))
-
             self.space.step(1/300)
 
