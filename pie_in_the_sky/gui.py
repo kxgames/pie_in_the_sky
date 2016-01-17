@@ -29,6 +29,15 @@ class Gui:
                 'bullet': pyglet.resource.image('bullet.png'),
                 'empty_bullet': pyglet.resource.image('empty_bullet.png'),
                 'target': pyglet.resource.image('target.png'),
+                'target_black': pyglet.resource.image('target_black.png'),
+                'target_blue': pyglet.resource.image('target_blue.png'),
+                'target_green': pyglet.resource.image('target_green.png'),
+                'target_orange': pyglet.resource.image('target_orange.png'),
+                'target_pink': pyglet.resource.image('target_pink.png'),
+                'target_purple': pyglet.resource.image('target_purple.png'),
+                'target_red': pyglet.resource.image('target_red.png'),
+                'target_teal': pyglet.resource.image('target_teal.png'),
+                'target_yellow': pyglet.resource.image('target_yellow.png'),
                 'cannon-base': pyglet.resource.image('cannon_base.png'),
                 'cannon-muzzle': pyglet.resource.image('cannon_muzzle.png'),
         }
@@ -207,6 +216,21 @@ class BulletExtension (FieldObjectExtension):
     image = 'bullet'
 
 class TargetExtension (FieldObjectExtension):
-    image = 'target'
+
+    @kxg.watch_token
+    def on_add_to_world(self, world):
+        target = self.token
+
+        image = 'target_black'
+        if target.owner:
+            image = 'target'
+
+        self.sprite = pyglet.sprite.Sprite(
+                self.actor.gui.images[image],
+                x=self.token.position.x,
+                y=self.token.position.y,
+                batch=self.actor.gui.batch,
+        )
+
 
 

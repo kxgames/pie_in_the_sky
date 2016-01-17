@@ -10,11 +10,19 @@ class Player(kxg.Token):
         from getpass import getuser
         self.name = getuser()
         self.cannons = []
+        self.targets = []
 
         self.max_arsenal = 6
         self.arsenal = self.max_arsenal
         self._arsenal = float(self.max_arsenal)
         self.arsenal_recharge_rate = 1
+
+    def add_target(self, target):
+        self.targets.append(target)
+
+    def remove_target(self, target):
+        self.targets.remove(target)
+
 
     @kxg.read_only
     def can_shoot(self, bullet):
@@ -169,8 +177,9 @@ class Bullet(FieldObject):
 
 class Target(FieldObject):
 
-    def __init__(self, position, velocity):
-        super().__init__(position, velocity, mass=10, radius=15)
+    def __init__(self, position, velocity, owner=None):
+        super().__init__(position, velocity, mass=2, radius=15)
+        self.owner = owner
         
     def __extend__(self):
         from . import gui

@@ -11,29 +11,37 @@ class StartGame (kxg.Message):
         from vecrec import Vector
         field = world.field
 
-        # Create the target and give it a somewhat random initial position and 
-        # velocity.
+        def random_position():
+            return field.center + Vector.random(0.4*field.height)
+        def random_velocity():
+            return Vector.random(10)
 
-        random_offset = Vector.random(field.height/4)
-        random_velocity = Vector.random(10)
+        self.targets = []
+        targets_per_player = 2
 
-        self.targets = [
-                tokens.Target(field.center + random_offset, random_velocity),
-                tokens.Target(field.center - random_offset, -random_velocity),
-        ]
-
-        # Create a cannon for each player and decide which side of the field 
-        # each one should go on.
+        # Create a cannon and several targets for each player and decide which 
+        # side of the field each cannon should go on.
 
         players = world.players
         num_players = len(players)
         self.cannons = []
 
         for i in range(num_players):
+            player = players[i]
             position = Vector(
                     field.left, (i + 1) * field.height / (num_players + 1))
             self.cannons.append(
-                    tokens.Cannon(players[i], position))
+                    tokens.Cannon(player, position))
+
+            for j in range(targets_per_player):
+                target = tokens.Target(
+                        random_position(), random_velocity(), player)
+                self.targets.append(target)
+
+        # Create the black target
+        self.targets.append(
+                tokens.Target(random_position(), random_velocity())
+        )
 
     def tokens_to_add(self):
         yield from self.targets
@@ -41,7 +49,7 @@ class StartGame (kxg.Message):
 
     def on_check(self, world):
         if world.targets:
-            raise kxg.MessageCheck("target already exists")
+            raise kxg.MessageCheck("targets already exists")
 
     def on_execute(self, world):
         world.targets = self.targets
@@ -49,6 +57,10 @@ class StartGame (kxg.Message):
         for cannon in self.cannons:
             player = cannon.player
             player.cannons = [cannon]
+
+        for target in self.targets:
+            if target.owner:
+                target.owner.add_target(target)
 
 
 class CreatePlayer (kxg.Message):
@@ -119,17 +131,29 @@ class HitTarget (kxg.Message):
 
     def __init__(self, bullet, target):
         self.bullet = bullet
-        self.target = target
+        self.shooter = bullet.cannon.player
+
+        self.target = None
+        self.owner = target.owner
+
+        if self.owner == self.shooter:
+            # Player hitting there target
+            self.target = target
+        elif not (self.owner or self.shooter.targets):
+            # Player hitting final target
+            self.target = target
 
     def tokens_to_remove(self):
         yield self.bullet
-        yield self.target
+        if self.target:
+            yield self.target
 
     def on_check(self, world):
         pass
 
     def on_execute(self, world):
-        pass
+        if self.owner:
+            self.owner.remove_target(self.target)
 
 
 
