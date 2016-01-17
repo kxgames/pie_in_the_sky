@@ -27,17 +27,10 @@ class Player(kxg.Token):
     def spend_arsenal(self, bullet):
         self.arsenal -= bullet.mass
         self._arsenal -= bullet.mass
-        kxg.info("Arsenal at: {self.arsenal}")
 
     def recharge_arsenal(self, dt):
         if not self.arsenal == self.max_arsenal:
             self._arsenal += dt * self.arsenal_recharge_rate
-            if int(self._arsenal) > self.arsenal:
-                tmp = self.arsenal+1
-                if tmp == self.max_arsenal:
-                    kxg.info("Arsenal at: {tmp} (full)")
-                else:
-                    kxg.info("Arsenal at: {tmp}")
             self.arsenal = int(self._arsenal)
             if self._arsenal > self.max_arsenal:
                 self._arsenal = self.max_arsenal
