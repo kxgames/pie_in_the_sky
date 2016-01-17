@@ -16,11 +16,21 @@ class StartGame (kxg.Message):
         def random_velocity():
             return Vector.random(10)
 
-        self.targets = []
-        targets_per_player = 2
+        # Create a few obstacles in the same way.
+
+        self.obstacles = [
+                tokens.Obstacle(
+                    field.center + Vector.random(field.height / 3),
+                    Vector.random(10))
+                for i in range(1)
+        ]
 
         # Create a cannon and several targets for each player and decide which 
         # side of the field each cannon should go on.
+
+        self.targets = []
+        targets_per_player = 2
+
 
         players = world.players
         num_players = len(players)
@@ -45,6 +55,7 @@ class StartGame (kxg.Message):
 
     def tokens_to_add(self):
         yield from self.targets
+        yield from self.obstacles
         yield from self.cannons
 
     def on_check(self, world):
@@ -53,6 +64,7 @@ class StartGame (kxg.Message):
 
     def on_execute(self, world):
         world.targets = self.targets
+        world.obstacles = self.obstacles
 
         for cannon in self.cannons:
             player = cannon.player
@@ -154,6 +166,25 @@ class HitTarget (kxg.Message):
     def on_execute(self, world):
         if self.owner:
             self.owner.remove_target(self.target)
+
+
+class HitObstacle (kxg.Message):
+    """
+    Hit a target or a power-up with a bullet. 
+    """
+
+    def __init__(self, bullet, obstacle):
+        self.bullet = bullet
+        self.obstacle = obstacle
+
+    def tokens_to_remove(self):
+        yield self.bullet
+
+    def on_check(self, world):
+        pass
+
+    def on_execute(self, world):
+        pass
 
 
 

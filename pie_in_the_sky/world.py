@@ -9,24 +9,26 @@ class World (kxg.World):
     """
 
     field_size = 600, 400
+    gravity_constant = 10.0**5
 
     def __init__(self):
         super().__init__()
         self.field = Rect.from_size(*self.field_size)
         self.players = []
-        self.targets = []
         self.bullets = []
-
-        self.gravity_constant = 10.0**5
+        self.targets = []
+        self.obstacles = []
 
     @property
     def field_objects(self):
-        yield from self.targets
         yield from self.bullets
+        yield from self.targets
+        yield from self.obstacles
 
     @property
     def non_bullets(self):
         yield from self.targets
+        yield from self.obstacles
 
     def hit_target(self, player):
         # End the game...
@@ -83,10 +85,10 @@ class World (kxg.World):
             G = self.gravity_constant
 
             offset = p2 - p1
-            partial_force = G * offset.unit / offset.magnitude_squared
+            force = G * m1 * m2 * offset.unit / offset.magnitude_squared
 
-            fo1.add_next_acceleration(m2 * partial_force)
-            fo2.add_next_acceleration(-m1 * partial_force)
+            fo1.add_next_acceleration(force / abs(m1))
+            fo2.add_next_acceleration(-force / abs(m2))
 
         # Calculate new velocities and positions based on the new 
         # accelerations.
