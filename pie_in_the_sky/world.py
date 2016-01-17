@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import kxg
+import kxg, itertools
 from vecrec import Rect
 
 class World (kxg.World):
@@ -19,35 +19,45 @@ class World (kxg.World):
 
         self.gravity_constant = 10.0**5
 
-        self.debug_timer = 0
+    @property
+    def field_objects(self):
+        yield from self.targets
+        yield from self.bullets
+
+    @property
+    def non_bullets(self):
+        yield from self.targets
 
     def hit_target(self, player):
         # End the game...
         raise NotImplementedError
 
     def on_update_game(self, delta_t):
-
         super().on_update_game(delta_t)
 
         # Update players
+
         for player in self.players:
             player.recharge_arsenal(delta_t)
 
-        self.debug_timer += delta_t
         # Calculate motion phase
+
         self.calculate_motions(delta_t)
 
         # Motion phase
+
         for field_object in self.field_objects:
             field_object.move()
 
-        if self.debug_timer >= 1:
-            self.debug_timer -= 1
+        # Collision detection phase
 
-        ## Collision detection phase
-        #colliding_pairs = self.detect_collisions()
+        for obj1, obj2 in self.yield_bouncing_collisions():
+            obj1.bounce(obj2)
 
-        ## Collision handling phase
+    def on_report_to_referee(self, reporter):
+        from . import messages
+        for bullet, field_object in self.yield_bullet_collisions():
+            reporter >> messages.HitSomething(bullet, field_object)
 
     def calculate_motions(self, delta_t):
         """ 
@@ -57,58 +67,41 @@ class World (kxg.World):
         # Calculate new accelerations
         # Note, this assumes the objects have already cleared their 
         # accelerations
-        gravity_objects = self.targets + self.bullets
-        unchecked_objects = gravity_objects[:]
-        for object_1 in gravity_objects:
-            unchecked_objects.remove(object_1)
-            for object_2 in unchecked_objects:
-                m1 = object_1.mass
-                p1 = object_1.position
-                m2 = object_2.mass
-                p2 = object_2.position
-                G = self.gravity_constant
+        for fo1, fo2 in itertools.combinations(self.field_objects, 2):
 
-                distance = p2 - p1
-                distance_unit = distance.get_unit()
-                partial_force = G * distance.unit / distance.magnitude_squared
+            # Don't calculate gravity for objects that are too close to each 
+            # other, to avoid weird artifacts.
+            if fo1.is_touching(fo2):
+                continue
 
-                a1 = m2 * partial_force
-                a2 = m1 * -partial_force
+            m1 = fo1.mass
+            p1 = fo1.position
+            m2 = fo2.mass
+            p2 = fo2.position
+            G = self.gravity_constant
 
-                object_1.add_next_acceleration(a1)
-                object_2.add_next_acceleration(a2)
+            offset = p2 - p1
+            partial_force = G * offset.unit / offset.magnitude_squared
+
+            fo1.add_next_acceleration(m2 * partial_force)
+            fo2.add_next_acceleration(-m1 * partial_force)
 
         # Calculate new velocities and positions based on the new 
         # accelerations.
-        for field_object in self.field_objects:
-            field_object.calculate_motion(delta_t)
+        for fo in self.field_objects:
+            fo.calculate_motion(delta_t)
 
-    def detect_collisions(self):
-        """
-        Find any instances of bullets hitting other objects and return a list of colliding pairs of bullet and hittable objects. 
+    def yield_bullet_collisions(self):
+        for b1, b2 in itertools.combinations(self.bullets, 2):
+            if b1.is_touching(b2):
+                yield b1, b2
 
-        """
-        
-        collision_pairs = []
+        for b, nb in itertools.product(self.bullets, self.non_bullets):
+            if b.is_touching(nb):
+                yield b, nb
 
-        unchecked_bullets = self.bullets[:]
-        # Check all hittable objects to see if any can hit or be hit by any 
-        # bullet. (They may have different collision distances.)
-        for hittable in self.hittable_objects:
-
-            if hittable in unchecked_bullets:
-                # Hittable is a bullet. It will be checked for all possible 
-                # collisions during this iteration. Further checks aren't 
-                # necessary.
-                unchecked_bullets.remove(hittable)
-
-            for bullet in unchecked_bullets:
-                if hittable.can_collide_with(bullet) or bullet.can_collide_with(hittable): 
-                    collision_pairs.append(hittable, bullet)
-                    
-        return collision_pairs
-
-    @property
-    def field_objects(self):
-        return self.targets + self.bullets[:]
+    def yield_bouncing_collisions(self):
+        for nb1, nb2 in itertools.combinations(self.non_bullets, 2):
+            if nb1.is_touching(nb2):
+                yield nb1, nb2
 

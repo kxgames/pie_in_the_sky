@@ -3,10 +3,7 @@
 import os.path
 import kxg, pyglet, glooey
 from vecrec import Vector
-
-from . import world
-from . import tokens
-from . import messages
+from . import world, tokens, messages
 
 pyglet.resource.path = [
         os.path.join(os.path.dirname(__file__), '..', 'resources'),
@@ -112,13 +109,14 @@ class CannonExtension (kxg.TokenExtension):
                 batch=self.actor.gui.batch,
                 group=pyglet.graphics.OrderedGroup(1),
         )
-        self.muzzle = pyglet.sprite.Sprite(
-                self.actor.gui.images['cannon-muzzle'],
-                x=self.token.position.x,
-                y=self.token.position.y,
-                batch=self.actor.gui.batch,
-                group=pyglet.graphics.OrderedGroup(0),
-        )
+        if self.token.player is self.actor.player:
+            self.muzzle = pyglet.sprite.Sprite(
+                    self.actor.gui.images['cannon-muzzle'],
+                    x=self.token.position.x,
+                    y=self.token.position.y,
+                    batch=self.actor.gui.batch,
+                    group=pyglet.graphics.OrderedGroup(0),
+            )
 
     def create_arsenal(self, world):
         # create ordered arsenal position list
@@ -163,8 +161,9 @@ class CannonExtension (kxg.TokenExtension):
 
     @kxg.watch_token
     def on_update_game(self, dt):
-        focus_vector = self.actor.focus_point - self.token.position
-        self.muzzle.rotation = focus_vector.get_degrees_to((1, 0))
+        if self.token.player is self.actor.player:
+            focus_vector = self.actor.focus_point - self.token.position
+            self.muzzle.rotation = focus_vector.get_degrees_to((1, 0))
 
         arsenal_count = self.token.player.arsenal
         # activate full bullets

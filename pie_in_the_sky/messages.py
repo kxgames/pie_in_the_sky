@@ -27,18 +27,13 @@ class StartGame (kxg.Message):
 
         players = world.players
         num_players = len(players)
+        self.cannons = []
 
-        if num_players == 1:
-            self.cannons = [
-                    tokens.Cannon(players[0], field.center_left),
-            ]
-        elif num_players == 2:
-            self.cannons = [
-                    tokens.Cannon(players[0], field.center_left),
-                    tokens.Cannon(players[1], field.center_right),
-            ]
-        else:
-            raise ValueError("Must have either 1 or 2 players")
+        for i in range(num_players):
+            position = Vector(
+                    field.left, (i + 1) * field.height / (num_players + 1))
+            self.cannons.append(
+                    tokens.Cannon(players[i], position))
 
     def tokens_to_add(self):
         yield self.target1
