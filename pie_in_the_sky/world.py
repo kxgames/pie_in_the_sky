@@ -59,6 +59,7 @@ class World (kxg.World):
         from . import messages
         for bullet, field_object in self.yield_bullet_collisions():
             field_object.on_hit_by_bullet(reporter, bullet)
+            break
 
     def calculate_motions(self, delta_t):
         """ 
