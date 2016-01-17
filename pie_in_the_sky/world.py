@@ -85,10 +85,10 @@ class World (kxg.World):
             G = self.gravity_constant
 
             offset = p2 - p1
-            partial_force = G * offset.unit / offset.magnitude_squared
+            force = G * m1 * m2 * offset.unit / offset.magnitude_squared
 
-            fo1.add_next_acceleration(m2 * partial_force)
-            fo2.add_next_acceleration(-m1 * partial_force)
+            fo1.add_next_acceleration(force / abs(m1))
+            fo2.add_next_acceleration(-force / abs(m2))
 
         # Calculate new velocities and positions based on the new 
         # accelerations.

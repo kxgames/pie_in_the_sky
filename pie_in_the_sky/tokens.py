@@ -188,7 +188,7 @@ class Target(FieldObject):
 class Obstacle(FieldObject):
 
     def __init__(self, position, velocity):
-        super().__init__(position, velocity, mass=10, radius=20)
+        super().__init__(position, velocity, mass=-5, radius=20)
 
     def __extend__(self):
         from . import gui

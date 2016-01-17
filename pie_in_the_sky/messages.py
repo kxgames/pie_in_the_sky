@@ -28,7 +28,7 @@ class StartGame (kxg.Message):
                 tokens.Obstacle(
                     field.center + Vector.random(field.height / 3),
                     Vector.random(10))
-                for i in range(0)
+                for i in range(1)
         ]
 
         # Create a cannon for each player and decide which side of the field 
