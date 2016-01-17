@@ -115,6 +115,9 @@ class GuiActor (kxg.Actor):
     def on_mouse_motion(self, x, y, dx, dy):
         self.focus_point = Vector(x, y)
 
+    @kxg.subscribe_to_message(messages.HitSomething)
+    def on_hit_by_bullet(self, message):
+        ExplosionAnimation(self, message.position)
 
 
 class CannonExtension (kxg.TokenExtension):
@@ -222,7 +225,6 @@ class FieldObjectExtension (kxg.TokenExtension):
     @kxg.watch_token
     def on_remove_from_world(self):
         self.sprite.delete()
-        ExplosionAnimation(self.actor, self.token.position)
 
 
 class BulletExtension (FieldObjectExtension):
