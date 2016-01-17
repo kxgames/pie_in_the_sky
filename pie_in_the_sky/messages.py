@@ -21,8 +21,8 @@ class StartGame (kxg.Message):
         self.obstacles = [
                 tokens.Obstacle(
                     Vector(
-                        random.randrange(field.left, field.center_x),
-                        random.randrange(field.bottom, field.top),
+                        random.randrange(field.left + 100, field.center_x),
+                        random.randrange(field.bottom + 100, field.top - 100),
                     ),
                     Vector.random(10))
                 for i in range(1)
