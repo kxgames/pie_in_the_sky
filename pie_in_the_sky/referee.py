@@ -20,4 +20,10 @@ class Referee (kxg.Referee):
         if num_players_joined == self.num_players_expected:
             self >> messages.StartGame(self.world)
 
+    @kxg.subscribe_to_message(messages.HitTarget)
+    def on_hit_target(self, message):
+        if message.target and message.target.is_black_ball:
+            self >> messages.EndGame(message.shooter)
+
+
 

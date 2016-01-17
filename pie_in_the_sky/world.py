@@ -18,6 +18,7 @@ class World (kxg.World):
         self.bullets = []
         self.targets = []
         self.obstacles = []
+        self.winner = None
 
     @property
     def field_objects(self):

@@ -31,7 +31,6 @@ class StartGame (kxg.Message):
         self.targets = []
         targets_per_player = 2
 
-
         players = world.players
         num_players = len(players)
         self.cannons = []
@@ -175,6 +174,7 @@ class HitTarget (HitSomething):
         if self.owner:
             self.owner.remove_target(self.target)
 
+
 class HitObstacle (HitSomething):
     """
     Hit a target or a power-up with a bullet. 
@@ -189,6 +189,15 @@ class HitObstacle (HitSomething):
         yield self.bullet
 
 
+class EndGame (kxg.Message):
 
+    def __init__(self, winner):
+        self.winner = winner
 
+    def on_check(self, world):
+        if world.is_game_over():
+            raise kxg.MessageCheck("game already over")
 
+    def on_execute(self, world):
+        world.winner = self.winner
+        world.end_game()
