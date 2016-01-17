@@ -29,8 +29,7 @@ class StartGame (kxg.Message):
         # side of the field each cannon should go on.
 
         self.targets = []
-        targets_per_player = 2
-
+        targets_per_player = 1
 
         players = world.players
         num_players = len(players)
@@ -172,7 +171,7 @@ class HitTarget (HitSomething):
             yield self.target
 
     def on_execute(self, world):
-        if self.owner:
+        if self.owner == self.shooter:
             self.owner.remove_target(self.target)
 
 class HitObstacle (HitSomething):
