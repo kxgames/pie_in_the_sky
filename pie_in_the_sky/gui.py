@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os.path
-import kxg, pyglet, glooey
+import kxg, pyglet, glooey, random
 from vecrec import Vector
 from . import world, tokens, messages
 
@@ -32,6 +32,9 @@ class Gui:
                 'obstacle': pyglet.resource.image('obstacle.png'),
                 'cannon-base': pyglet.resource.image('cannon_base.png'),
                 'cannon-muzzle': pyglet.resource.image('cannon_muzzle.png'),
+                'explosion-1': pyglet.resource.image('explosion_1.png'),
+                'explosion-2': pyglet.resource.image('explosion_2.png'),
+                'explosion-3': pyglet.resource.image('explosion_3.png'),
         }
 
         # Center all the images except the cannon muzzle, which we will want to 
@@ -62,6 +65,7 @@ class GuiActor (kxg.Actor):
     def __init__(self):
         super().__init__()
         self.player = None
+        self.animations = []
         self.focus_point = Vector.null()
 
     def on_setup_gui(self, gui):
@@ -74,6 +78,10 @@ class GuiActor (kxg.Actor):
 
     def on_draw(self):
         self.gui.on_refresh_gui()
+
+    def on_update_game(self, dt):
+        for animation in self.animations:
+            animation.on_update(dt)
 
     def on_mouse_press(self, x, y, button, modifiers):
         # Send a "ShootBullet" signal when the user left-clicks.
@@ -91,6 +99,9 @@ class GuiActor (kxg.Actor):
                 self >> messages.ShootBullet(bullet)
             else:
                 kxg.info("Not enough arsenal to shoot bullet!")
+
+        if button == 4:
+            ExplosionAnimation(self, self.focus_point)
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.focus_point = Vector(x, y)
@@ -202,6 +213,7 @@ class FieldObjectExtension (kxg.TokenExtension):
     @kxg.watch_token
     def on_remove_from_world(self):
         self.sprite.delete()
+        ExplosionAnimation(self.actor, self.token.position)
 
 
 class BulletExtension (FieldObjectExtension):
@@ -212,5 +224,47 @@ class TargetExtension (FieldObjectExtension):
 
 class ObstacleExtension (FieldObjectExtension):
     image = 'obstacle'
+
+
+class ExplosionAnimation:
+
+    def __init__(self, actor, position):
+        self.actor = actor; self.actor.animations.append(self)
+        self.position = position
+        self.scale = 0
+        self.scale_velocity = 10
+        self.scale_acceleration = -40
+        self.num_images = 3
+
+        self.explosion_sprites = [
+                pyglet.sprite.Sprite(
+                    self.actor.gui.images['explosion-'+str(i+1)],
+                    x=self.position.x,
+                    y=self.position.y,
+                    batch=self.actor.gui.batch,
+                    group=pyglet.graphics.OrderedGroup(-(i+1)),
+                )
+                for i in range(self.num_images)
+        ]
+        self.rotation_rates = [
+                random.randrange(180, 360) * (-1)**i
+                for i in range(self.num_images)
+        ]
+
+    def on_update(self, dt):
+        self.scale += self.scale_velocity * dt
+        self.scale_velocity += self.scale_acceleration * dt
+
+        if self.scale < 0:
+            self.actor.animations.remove(self)
+            for sprite in self.explosion_sprites:
+                sprite.delete()
+        else:
+            for i in range(self.num_images):
+                sprite = self.explosion_sprites[i]
+                sprite.scale = self.scale
+                sprite.rotation += self.rotation_rates[i] * dt
+
+
 
 
