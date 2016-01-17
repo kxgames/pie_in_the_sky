@@ -19,8 +19,6 @@ class World (kxg.World):
 
         self.gravity_constant = 10.0**5
 
-        self.debug_timer = 0
-
     @property
     def field_objects(self):
         yield from self.targets
@@ -37,18 +35,16 @@ class World (kxg.World):
     def on_update_game(self, delta_t):
         super().on_update_game(delta_t)
 
-        self.debug_timer += delta_t
         # Calculate motion phase
+
         self.calculate_motions(delta_t)
 
         # Motion phase
+
         for field_object in self.field_objects:
             field_object.move()
 
-        if self.debug_timer >= 1:
-            self.debug_timer -= 1
-
-        ## Collision detection phase
+        # Collision detection phase
 
         for obj1, obj2 in self.yield_bouncing_collisions():
             obj1.bounce(obj2)
