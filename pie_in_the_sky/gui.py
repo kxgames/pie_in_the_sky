@@ -226,11 +226,14 @@ class FieldObjectExtension (kxg.TokenExtension):
     @kxg.watch_token
     def on_add_to_world(self, world):
         self.sprite = pyglet.sprite.Sprite(
-                self.actor.gui.images[self.image],
+                self.actor.gui.images[self.get_image()],
                 x=self.token.position.x,
                 y=self.token.position.y,
                 batch=self.actor.gui.batch,
         )
+
+    def get_image(self):
+        return self.image
 
     @kxg.watch_token
     def on_update_game(self, delta_t):
@@ -246,20 +249,16 @@ class BulletExtension (FieldObjectExtension):
 
 class TargetExtension (FieldObjectExtension):
 
-    @kxg.watch_token
-    def on_add_to_world(self, world):
+    def get_image(self):
         target = self.token
 
-        image = 'target_black'
-        if target.owner:
-            image = 'target'
-
-        self.sprite = pyglet.sprite.Sprite(
-                self.actor.gui.images[image],
-                x=self.token.position.x,
-                y=self.token.position.y,
-                batch=self.actor.gui.batch,
-        )
+        if not target.owner:
+            self.image = 'target_black'
+        elif target.owner is self.actor.player:
+            self.image = 'target_red'
+        else:
+            self.image = 'target_blue'
+        return self.image
 
 
 class ObstacleExtension (FieldObjectExtension):
