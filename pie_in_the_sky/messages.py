@@ -108,27 +108,38 @@ class SyncWorlds (kxg.Message):
     """
     pass
 
-class HitBullet (kxg.Message):
+class HitSomething (kxg.Message):
+
+    def __init__(self, bullet):
+        self.position = bullet.position
+
+    def on_check(self, world):
+        pass
+
+    def on_execute(self, world):
+        pass
+
+
+class HitBullet (HitSomething):
     """
     When two bullets collide with each other, destroy both of them.
     """
 
     def __init__(self, bullet_1, bullet_2):
+        super().__init__(bullet_1)
         self.bullets = bullet_1, bullet_2
 
     def tokens_to_remove(self):
         yield from self.bullets
 
-    def on_check(self, world):
-        pass
 
-
-class HitTarget (kxg.Message):
+class HitTarget (HitSomething):
     """
     Hit a target or a power-up with a bullet. 
     """
 
     def __init__(self, bullet, target):
+        super().__init__(bullet)
         self.bullet = bullet
         self.target = target
 
@@ -136,30 +147,19 @@ class HitTarget (kxg.Message):
         yield self.bullet
         yield self.target
 
-    def on_check(self, world):
-        pass
 
-    def on_execute(self, world):
-        pass
-
-
-class HitObstacle (kxg.Message):
+class HitObstacle (HitSomething):
     """
     Hit a target or a power-up with a bullet. 
     """
 
     def __init__(self, bullet, obstacle):
+        super().__init__(bullet)
         self.bullet = bullet
         self.obstacle = obstacle
 
     def tokens_to_remove(self):
         yield self.bullet
-
-    def on_check(self, world):
-        pass
-
-    def on_execute(self, world):
-        pass
 
 
 
