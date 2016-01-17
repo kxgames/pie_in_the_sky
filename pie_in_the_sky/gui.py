@@ -79,7 +79,7 @@ class GuiActor (kxg.Actor):
 
     def on_setup_gui(self, gui):
         self.gui = gui
-        self.gui.window.set_handlers(self)
+        self.gui.window.push_handlers(self)
 
     def on_start_game(self, num_players):
         self.player = tokens.Player()
@@ -118,6 +118,20 @@ class GuiActor (kxg.Actor):
     @kxg.subscribe_to_message(messages.HitSomething)
     def on_hit_by_bullet(self, message):
         ExplosionAnimation(self, message.position)
+
+    @kxg.subscribe_to_message(messages.EndGame)
+    def on_end_game(self, message):
+        you_won = self.world.winner is self.player 
+        self.gui.window.pop_handlers()
+        self.gui.splash_message = pyglet.text.Label(
+                'You won!' if you_won else 'You lost...',
+                font_name='Times New Roman',
+                font_size=36,
+                x=self.world.field.center.x, y=self.world.field.center.y,
+                anchor_x='center', anchor_y='center',
+                batch=self.gui.batch,
+                group=pyglet.graphics.OrderedGroup(10),
+        )
 
 
 class CannonExtension (kxg.TokenExtension):

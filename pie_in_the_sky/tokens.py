@@ -185,6 +185,10 @@ class Target(FieldObject):
         from . import gui
         return {gui.GuiActor: gui.TargetExtension}
 
+    @property
+    def is_black_ball(self):
+        return self.owner is None
+
     @kxg.read_only
     def on_hit_by_bullet(self, reporter, bullet):
         from . import messages
