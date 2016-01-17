@@ -88,6 +88,7 @@ class FieldObject(kxg.Token):
         self.velocity = y * v1y +  x * v1x_final
         other.velocity = y * v2y + x * v2x_final
 
+    @kxg.read_only
     def is_touching(self, other):
         offset = self.position - other.position
         return offset.magnitude < self.radius + other.radius
@@ -124,6 +125,13 @@ class Bullet(FieldObject):
     def player(self):
         return self.cannon.player
 
+    @kxg.read_only
+    def on_hit_by_bullet(self, reporter, bullet):
+        from . import messages
+        reporter >> messages.HitBullet(bullet, self)
+
+    def on_remove_from_world(self):
+        self.world.bullets.remove(self)
 
 class Target(FieldObject):
 
@@ -134,3 +142,10 @@ class Target(FieldObject):
         from . import gui
         return {gui.GuiActor: gui.TargetExtension}
 
+    @kxg.read_only
+    def on_hit_by_bullet(self, reporter, bullet):
+        from . import messages
+        reporter >> messages.HitTarget(bullet, self)
+
+    def on_remove_from_world(self):
+        self.world.targets.remove(self)

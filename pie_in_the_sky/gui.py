@@ -111,7 +111,7 @@ class CannonExtension (kxg.TokenExtension):
             self.muzzle.rotation = focus_vector.get_degrees_to((1, 0))
 
     @kxg.watch_token
-    def on_remove_from_world(self, world):
+    def on_remove_from_world(self):
         pass
 
 
@@ -131,7 +131,7 @@ class FieldObjectExtension (kxg.TokenExtension):
         self.sprite.position = self.token.position
 
     @kxg.watch_token
-    def on_remove_from_world(self, world):
+    def on_remove_from_world(self):
         self.sprite.delete()
 
 

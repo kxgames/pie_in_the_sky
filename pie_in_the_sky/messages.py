@@ -14,13 +14,16 @@ class StartGame (kxg.Message):
         # Create the target and give it a somewhat random initial position and 
         # velocity.
 
-        rvec = Vector.random(field.height/4)
-        position = field.center + rvec
-        velocity = Vector.random(10)
-        self.target1 = tokens.Target(position, velocity)
+        random_offset = Vector.random(field.height/4)
+        random_velocity = Vector.random(10)
 
-        position = field.center - rvec
-        self.target2 = tokens.Target(position, -velocity)
+        self.targets = [
+                tokens.Target(field.center + random_offset, random_velocity),
+                tokens.Target(field.center - random_offset, -random_velocity),
+        ]
+        self.targets = [
+                tokens.Target(field.center, Vector.null()),
+        ]
 
         # Create a cannon for each player and decide which side of the field 
         # each one should go on.
@@ -36,8 +39,7 @@ class StartGame (kxg.Message):
                     tokens.Cannon(players[i], position))
 
     def tokens_to_add(self):
-        yield self.target1
-        yield self.target2
+        yield from self.targets
         yield from self.cannons
 
     def on_check(self, world):
@@ -45,7 +47,7 @@ class StartGame (kxg.Message):
             raise kxg.MessageCheck("target already exists")
 
     def on_execute(self, world):
-        world.targets = [self.target1, self.target2]
+        world.targets = self.targets
 
         for cannon in self.cannons:
             player = cannon.player
@@ -99,28 +101,39 @@ class SyncWorlds (kxg.Message):
     """
     pass
 
-class HitTarget (kxg.Message):
+class HitBullet (kxg.Message):
     """
-    Hit a target. 
+    When two bullets collide with each other, destroy both of them.
     """
 
-    def __init__(self, target, bullet):
-        self.target = target
-        self.bullet = bullet
-        self.player = bullet.player
+    def __init__(self, bullet_1, bullet_2):
+        self.bullets = bullet_1, bullet_2
 
     def tokens_to_remove(self):
-        yield self.bullet, self.target
+        yield from self.bullets
 
     def on_check(self, world):
-        target = self.target
-        bullet = self.bullet
-        if not target.can_collide_with(bullet) and not bullet.can_collide_with(target):
-            raise kxg.MessageCheck("bullet missed")
+        pass
+
+
+class HitTarget (kxg.Message):
+    """
+    Hit a target or a power-up with a bullet. 
+    """
+
+    def __init__(self, bullet, target):
+        self.bullet = bullet
+        self.target = target
+
+    def tokens_to_remove(self):
+        yield self.bullet
+        yield self.target
+
+    def on_check(self, world):
+        pass
 
     def on_execute(self, world):
-        world.remove_bullet(self.bullet)
-        world.hit_target(self.player)
+        pass
 
 
 

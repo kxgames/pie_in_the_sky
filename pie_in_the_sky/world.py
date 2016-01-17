@@ -49,10 +49,11 @@ class World (kxg.World):
         for obj1, obj2 in self.yield_bouncing_collisions():
             obj1.bounce(obj2)
 
+    @kxg.read_only
     def on_report_to_referee(self, reporter):
         from . import messages
         for bullet, field_object in self.yield_bullet_collisions():
-            reporter >> messages.HitSomething(bullet, field_object)
+            field_object.on_hit_by_bullet(reporter, bullet)
 
     def calculate_motions(self, delta_t):
         """ 
@@ -86,6 +87,7 @@ class World (kxg.World):
         for fo in self.field_objects:
             fo.calculate_motion(delta_t)
 
+    @kxg.read_only
     def yield_bullet_collisions(self):
         for b1, b2 in itertools.combinations(self.bullets, 2):
             if b1.is_touching(b2):
@@ -95,6 +97,7 @@ class World (kxg.World):
             if b.is_touching(nb):
                 yield b, nb
 
+    @kxg.read_only
     def yield_bouncing_collisions(self):
         for nb1, nb2 in itertools.combinations(self.non_bullets, 2):
             if nb1.is_touching(nb2):
