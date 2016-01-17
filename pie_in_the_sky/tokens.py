@@ -14,7 +14,7 @@ class Player(kxg.Token):
         self.max_arsenal = 6
         self.arsenal = self.max_arsenal
         self._arsenal = float(self.max_arsenal)
-        self.arsenal_recharge_rate = 1/2
+        self.arsenal_recharge_rate = 1
 
     @kxg.read_only
     def can_shoot(self, bullet):
