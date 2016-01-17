@@ -117,9 +117,6 @@ class GuiActor (kxg.Actor):
             else:
                 kxg.info("Not enough arsenal to shoot bullet!")
 
-        if button == 4:
-            ExplosionAnimation(self, self.focus_point)
-
     def on_mouse_motion(self, x, y, dx, dy):
         self.focus_point = Vector(x, y)
 
