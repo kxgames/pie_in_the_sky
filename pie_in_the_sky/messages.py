@@ -21,9 +21,6 @@ class StartGame (kxg.Message):
                 tokens.Target(field.center + random_offset, random_velocity),
                 tokens.Target(field.center - random_offset, -random_velocity),
         ]
-        self.targets = [
-                tokens.Target(field.center, Vector.null()),
-        ]
 
         # Create a cannon for each player and decide which side of the field 
         # each one should go on.
