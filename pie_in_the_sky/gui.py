@@ -157,6 +157,9 @@ class CannonExtension (kxg.TokenExtension):
             )
 
     def create_arsenal(self, world):
+        if self.token.player is not self.actor.player:
+            return
+
         # create ordered arsenal position list
         bullet_radius = 5
         buffer = 1
@@ -199,9 +202,11 @@ class CannonExtension (kxg.TokenExtension):
 
     @kxg.watch_token
     def on_update_game(self, dt):
-        if self.token.player is self.actor.player:
-            focus_vector = self.actor.focus_point - self.token.position
-            self.muzzle.rotation = focus_vector.get_degrees_to((1, 0))
+        if self.token.player is not self.actor.player:
+            return
+
+        focus_vector = self.actor.focus_point - self.token.position
+        self.muzzle.rotation = focus_vector.get_degrees_to((1, 0))
 
         arsenal_count = self.token.player.arsenal
         # activate full bullets
