@@ -35,6 +35,11 @@ class World (kxg.World):
     def on_update_game(self, delta_t):
         super().on_update_game(delta_t)
 
+        # Update players
+
+        for player in self.players:
+            player.recharge_arsenal(delta_t)
+
         # Calculate motion phase
 
         self.calculate_motions(delta_t)

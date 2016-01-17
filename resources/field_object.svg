@@ -26,15 +26,15 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="-200.9032"
-     inkscape:cy="6.8722435"
+     inkscape:cx="-365.9032"
+     inkscape:cy="78.872243"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      showborder="false"
-     inkscape:window-width="1600"
-     inkscape:window-height="897"
+     inkscape:window-width="1680"
+     inkscape:window-height="1045"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -55,14 +55,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-952.36216)">
-    <circle
-       style="opacity:1;fill:#586e75;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path3336"
-       cx="35.714287"
-       cy="1019.8622"
-       r="5"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
     <g
        id="g4178"
        transform="translate(-24,-89)"
@@ -108,6 +100,30 @@
        height="10"
        x="-213"
        y="1067.3622"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <circle
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       r="5"
+       cy="1022.3622"
+       cx="104"
+       id="circle4155"
+       style="opacity:1;fill:#b58900;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle
+       style="opacity:1;fill:#eee8d5;fill-opacity:0.19487179;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path3336-6"
+       cx="104"
+       cy="1022.3622"
+       r="5"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <circle
+       style="opacity:1;fill:#586e75;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path3336"
+       cx="28.714294"
+       cy="1025.8622"
+       r="5"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
   </g>

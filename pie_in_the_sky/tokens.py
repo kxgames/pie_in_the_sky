@@ -11,9 +11,30 @@ class Player(kxg.Token):
         self.name = getuser()
         self.cannons = []
 
+        self.max_arsenal = 6
+        self.arsenal = self.max_arsenal
+        self._arsenal = float(self.max_arsenal)
+        self.arsenal_recharge_rate = 1/2
+
     @kxg.read_only
-    def has_bullet_capacity(self, bullet):
-        return False
+    def can_shoot(self, bullet):
+        return bullet.mass <= self.arsenal
+
+    @kxg.read_only
+    def can_not_shoot(self, bullet):
+        return not self.can_shoot(bullet)
+
+    def spend_arsenal(self, bullet):
+        self.arsenal -= bullet.mass
+        self._arsenal -= bullet.mass
+
+    def recharge_arsenal(self, dt):
+        if not self.arsenal == self.max_arsenal:
+            self._arsenal += dt * self.arsenal_recharge_rate
+            self.arsenal = int(self._arsenal)
+            if self._arsenal > self.max_arsenal:
+                self._arsenal = self.max_arsenal
+
 
 
 class Cannon(kxg.Token):
@@ -37,7 +58,7 @@ class FieldObject(kxg.Token):
     def __init__(self, position, velocity, mass=1, radius=20):
         super().__init__()
 
-        self.mass = float(mass)
+        self.mass = int(mass)
         self.position = position
         self.velocity = velocity
         self.acceleration = Vector.null()
@@ -109,6 +130,19 @@ class FieldObject(kxg.Token):
 
         self.next_position = p + dp
         self.next_velocity = v + dv
+
+        self.check_wall_bounce()
+
+    def check_wall_bounce(self):
+        field = self.world.field
+        x, y = self.next_position.tuple
+
+        if x <= field.left or x >= field.right:
+            # Flip the x velocity
+            self.next_velocity *= Vector(-1, 1)
+        if y <= field.bottom or y >= field.top:
+            # Flip the y velocity
+            self.next_velocity *= Vector(1, -1)
 
 
 class Bullet(FieldObject):

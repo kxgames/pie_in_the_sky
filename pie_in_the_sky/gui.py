@@ -27,6 +27,7 @@ class Gui:
 
         self.images = {
                 'bullet': pyglet.resource.image('bullet.png'),
+                'empty_bullet': pyglet.resource.image('empty_bullet.png'),
                 'target': pyglet.resource.image('target.png'),
                 'cannon-base': pyglet.resource.image('cannon_base.png'),
                 'cannon-muzzle': pyglet.resource.image('cannon_muzzle.png'),
@@ -76,8 +77,19 @@ class GuiActor (kxg.Actor):
     def on_mouse_press(self, x, y, button, modifiers):
         # Send a "ShootBullet" signal when the user left-clicks.
         if button == 1:
-            self >> messages.ShootBullet(
-                    self.focus_point, self.player.cannons[0])
+            target = self.focus_point
+            cannon = self.player.cannons[0]
+
+            direction = (target - cannon.position).unit
+            velocity = cannon.muzzle_speed * direction
+            position = cannon.position + 40 * direction
+
+            bullet = tokens.Bullet(cannon, position, velocity)
+
+            if self.player.can_shoot(bullet):
+                self >> messages.ShootBullet(bullet)
+            else:
+                kxg.info("Not enough arsenal to shoot bullet!")
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.focus_point = Vector(x, y)
@@ -88,6 +100,8 @@ class CannonExtension (kxg.TokenExtension):
 
     @kxg.watch_token
     def on_add_to_world(self, world):
+        self.create_arsenal(world)
+
         self.base = pyglet.sprite.Sprite(
                 self.actor.gui.images['cannon-base'],
                 x=self.token.position.x,
@@ -104,11 +118,65 @@ class CannonExtension (kxg.TokenExtension):
                     group=pyglet.graphics.OrderedGroup(0),
             )
 
+    def create_arsenal(self, world):
+        # create ordered arsenal position list
+        bullet_radius = 5
+        buffer = 1
+        radius = buffer+bullet_radius
+        arsenal_corner_positions = (
+                Vector(  radius, 3* radius),
+                Vector(  radius,    radius),
+                Vector(  radius,   -radius),
+                Vector(  radius, 3*-radius),
+                Vector(3*radius,    radius),
+                Vector(3*radius,   -radius)
+        )
+
+        # Generate ordered list of empty and full arsenal bullets
+        token_position = self.token.position
+        self.arsenal_images = []
+        for relative_position in arsenal_corner_positions:
+            position = token_position + relative_position
+            empty_bullet = pyglet.sprite.Sprite(
+                        self.actor.gui.images['empty_bullet'],
+                        x=position.x,
+                        y=position.y,
+                        batch=self.actor.gui.batch,
+                        group=pyglet.graphics.OrderedGroup(2),
+            )
+            full_bullet = pyglet.sprite.Sprite(
+                        self.actor.gui.images['bullet'],
+                        x=position.x,
+                        y=position.y,
+                        batch=self.actor.gui.batch,
+                        group=pyglet.graphics.OrderedGroup(2),
+            )
+            empty_bullet.visible = True
+            full_bullet.visible = False
+
+            self.arsenal_images.append({
+                "empty" : empty_bullet,
+                "full" : full_bullet
+            })
+
     @kxg.watch_token
     def on_update_game(self, dt):
         if self.token.player is self.actor.player:
             focus_vector = self.actor.focus_point - self.token.position
             self.muzzle.rotation = focus_vector.get_degrees_to((1, 0))
+
+        arsenal_count = self.token.player.arsenal
+        # activate full bullets
+        for bullet in self.arsenal_images[0:arsenal_count]:
+            if not bullet["full"].visible:
+                bullet["empty"].visible = False
+                bullet["full"].visible = True
+
+        # activate empty bullets
+        for bullet in self.arsenal_images[arsenal_count:]:
+            if not bullet["empty"].visible:
+                bullet["empty"].visible = True
+                bullet["full"].visible = False
 
     @kxg.watch_token
     def on_remove_from_world(self):
