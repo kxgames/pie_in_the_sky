@@ -76,6 +76,8 @@ class GuiActor (kxg.Actor):
         self.player = None
         self.animations = []
         self.focus_point = Vector.null()
+        self.show_fps = False
+        self.fps_widget = pyglet.clock.ClockDisplay()
 
     def on_setup_gui(self, gui):
         self.gui = gui
@@ -87,10 +89,16 @@ class GuiActor (kxg.Actor):
 
     def on_draw(self):
         self.gui.on_refresh_gui()
+        if self.show_fps:
+            self.fps_widget.draw()
 
     def on_update_game(self, dt):
         for animation in self.animations:
             animation.on_update(dt)
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == pyglet.window.key.SPACE:
+            self.show_fps = not self.show_fps
 
     def on_mouse_press(self, x, y, button, modifiers):
         # Send a "ShootBullet" signal when the user left-clicks.
@@ -132,6 +140,7 @@ class GuiActor (kxg.Actor):
                 batch=self.gui.batch,
                 group=pyglet.graphics.OrderedGroup(10),
         )
+
 
 
 class CannonExtension (kxg.TokenExtension):
