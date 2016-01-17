@@ -281,9 +281,8 @@ class ExplosionAnimation:
     def __init__(self, actor, position):
         self.actor = actor; self.actor.animations.append(self)
         self.position = position
-        self.scale = 0
-        self.scale_velocity = 10
-        self.scale_acceleration = -40
+        self.scale_velocity = -2
+        self.scale_acceleration = -4
         self.num_images = 3
 
         self.explosion_sprites = [
@@ -302,19 +301,17 @@ class ExplosionAnimation:
         ]
 
     def on_update(self, dt):
-        self.scale += self.scale_velocity * dt
+        for i in range(self.num_images):
+            sprite = self.explosion_sprites[i]
+            sprite.scale += self.scale_velocity * dt
+            sprite.rotation += self.rotation_rates[i] * dt
+
         self.scale_velocity += self.scale_acceleration * dt
 
-        if self.scale < 0:
+        if sprite.scale < 0:
             self.actor.animations.remove(self)
             for sprite in self.explosion_sprites:
                 sprite.delete()
-        else:
-            for i in range(self.num_images):
-                sprite = self.explosion_sprites[i]
-                sprite.scale = self.scale
-                sprite.rotation += self.rotation_rates[i] * dt
-
 
 
 
