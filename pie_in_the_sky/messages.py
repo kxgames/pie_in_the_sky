@@ -24,12 +24,12 @@ class StartGame (kxg.Message):
 
         # Create a few obstacles in the same way.
 
-        #self.obstacles = [
-        #        tokens.Obstacle(
-        #            field.center + Vector.random(field.height / 3),
-        #            Vector.random(10))
-        #        for i in range(3)
-        #]
+        self.obstacles = [
+                tokens.Obstacle(
+                    field.center + Vector.random(field.height / 3),
+                    Vector.random(10))
+                for i in range(0)
+        ]
 
         # Create a cannon for each player and decide which side of the field 
         # each one should go on.
