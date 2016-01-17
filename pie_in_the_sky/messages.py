@@ -1,5 +1,5 @@
 
-import kxg
+import kxg, random
 from . import tokens
 
 class StartGame (kxg.Message):
@@ -20,7 +20,10 @@ class StartGame (kxg.Message):
 
         self.obstacles = [
                 tokens.Obstacle(
-                    field.center + Vector.random(field.height / 3),
+                    Vector(
+                        random.randrange(field.left, field.center_x),
+                        random.randrange(field.bottom, field.top),
+                    ),
                     Vector.random(10))
                 for i in range(1)
         ]
@@ -43,13 +46,18 @@ class StartGame (kxg.Message):
                     tokens.Cannon(player, position))
 
             for j in range(targets_per_player):
+                x = field.width * 3 / 4
+                y = field.height * (1 + i * targets_per_player + j) / (num_players * targets_per_player + 1)
                 target = tokens.Target(
-                        random_position(), random_velocity(), player)
+                        Vector(x, y), random_velocity(), player)
                 self.targets.append(target)
 
         # Create the black target
         self.targets.append(
-                tokens.Target(random_position(), random_velocity())
+                tokens.Target(
+                    Vector(field.width * 5/6, field.center_y),
+                    random_velocity(),
+                )
         )
 
     def tokens_to_add(self):
