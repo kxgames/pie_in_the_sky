@@ -29,6 +29,10 @@ class World (kxg.World):
 
         super().on_update_game(delta_t)
 
+        # Update players
+        for player in self.players:
+            player.recharge_arsenal(delta_t)
+
         self.debug_timer += delta_t
         # Calculate motion phase
         self.calculate_motions(delta_t)
@@ -74,7 +78,6 @@ class World (kxg.World):
                 object_1.add_next_acceleration(a1)
                 object_2.add_next_acceleration(a2)
 
-        
         # Calculate new velocities and positions based on the new 
         # accelerations.
         for field_object in self.field_objects:
