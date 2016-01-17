@@ -151,7 +151,7 @@ class CannonExtension (kxg.TokenExtension):
                 x=self.token.position.x,
                 y=self.token.position.y,
                 batch=self.actor.gui.batch,
-                group=pyglet.graphics.OrderedGroup(1),
+                group=pyglet.graphics.OrderedGroup(4),
         )
         if self.token.player is self.actor.player:
             self.muzzle = pyglet.sprite.Sprite(
@@ -159,7 +159,7 @@ class CannonExtension (kxg.TokenExtension):
                     x=self.token.position.x,
                     y=self.token.position.y,
                     batch=self.actor.gui.batch,
-                    group=pyglet.graphics.OrderedGroup(0),
+                    group=pyglet.graphics.OrderedGroup(3),
             )
 
     def create_arsenal(self, world):
@@ -189,14 +189,14 @@ class CannonExtension (kxg.TokenExtension):
                         x=position.x,
                         y=position.y,
                         batch=self.actor.gui.batch,
-                        group=pyglet.graphics.OrderedGroup(2),
+                        group=pyglet.graphics.OrderedGroup(5),
             )
             full_bullet = pyglet.sprite.Sprite(
                         self.actor.gui.images['bullet'],
                         x=position.x,
                         y=position.y,
                         batch=self.actor.gui.batch,
-                        group=pyglet.graphics.OrderedGroup(2),
+                        group=pyglet.graphics.OrderedGroup(5),
             )
             empty_bullet.visible = True
             full_bullet.visible = False
@@ -241,6 +241,7 @@ class FieldObjectExtension (kxg.TokenExtension):
                 x=self.token.position.x,
                 y=self.token.position.y,
                 batch=self.actor.gui.batch,
+                group=pyglet.graphics.OrderedGroup(1),
         )
 
     def get_image(self):
@@ -261,15 +262,12 @@ class BulletExtension (FieldObjectExtension):
 class TargetExtension (FieldObjectExtension):
 
     def get_image(self):
-        target = self.token
-
-        if not target.owner:
-            self.image = 'target_black'
-        elif target.owner is self.actor.player:
-            self.image = 'target_red'
+        if not self.token.owner:
+            return 'target_black'
+        elif self.token.owner is self.actor.player:
+            return 'target_red'
         else:
-            self.image = 'target_blue'
-        return self.image
+            return 'target_blue'
 
 
 class ObstacleExtension (FieldObjectExtension):
