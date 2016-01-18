@@ -51,13 +51,13 @@ class World (kxg.World):
             wall.elasticity = 1
         self.space.add(walls)
 
-    def on_update_game(self, delta_t):
-        super().on_update_game(delta_t)
+    def on_update_game(self, dt):
+        super().on_update_game(dt)
 
         # Update players
 
         for player in self.players:
-            player.recharge_arsenal(delta_t)
+            player.recharge_arsenal(dt)
 
         # Update physics
 
@@ -72,6 +72,10 @@ class World (kxg.World):
             obj_1.body.apply_force(force.xy, (0,0))
             obj_2.body.apply_force((-force).xy, (0,0))
 
-        for i in range(10):
-            self.space.step(1/300)
+        # Note that we don't use dt as the time step because the simulation is 
+        # much more efficient if the step size doesn't change between frames.
+
+        physics_dt = 1 / 300
+        for i in range(int(dt // physics_dt)):
+            self.space.step(physics_dt)
 
