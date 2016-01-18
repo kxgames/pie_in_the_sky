@@ -15,6 +15,7 @@ class Gui:
         self.window = pyglet.window.Window()
         self.window.set_visible(True)
         self.window.set_size(*world.World.field_size)
+        self.window.set_caption("Pie in the Sky")
         self.batch = pyglet.graphics.Batch()
 
         # Load the background color from a resource file.
