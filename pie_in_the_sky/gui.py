@@ -26,7 +26,8 @@ class Gui:
         # Load all the sprite images from resource files.
 
         self.images = {
-                'bullet': pyglet.resource.image('bullet.png'),
+                'bullet_ours': pyglet.resource.image('bullet_ours.png'),
+                'bullet_theirs': pyglet.resource.image('bullet_theirs.png'),
                 'empty_bullet': pyglet.resource.image('empty_bullet.png'),
                 'target': pyglet.resource.image('target.png'),
                 'target_black': pyglet.resource.image('target_black.png'),
@@ -192,7 +193,7 @@ class CannonExtension (kxg.TokenExtension):
                         group=pyglet.graphics.OrderedGroup(5),
             )
             full_bullet = pyglet.sprite.Sprite(
-                        self.actor.gui.images['bullet'],
+                        self.actor.gui.images['bullet_ours'],
                         x=position.x,
                         y=position.y,
                         batch=self.actor.gui.batch,
@@ -257,7 +258,13 @@ class FieldObjectExtension (kxg.TokenExtension):
 
 
 class BulletExtension (FieldObjectExtension):
-    image = 'bullet'
+
+    def get_image(self):
+        if self.token.cannon.player is self.actor.player:
+            return 'bullet_ours'
+        else:
+            return 'bullet_theirs'
+
 
 class TargetExtension (FieldObjectExtension):
 
