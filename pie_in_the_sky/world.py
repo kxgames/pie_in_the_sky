@@ -21,6 +21,7 @@ class World (kxg.World):
         self.players = []
         self.bullets = []
         self.targets = []
+        self.final_target = None
         self.obstacles = []
         self.winner = None
 

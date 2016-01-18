@@ -37,7 +37,7 @@ class Referee (kxg.Referee):
         bullet = arbiter.shapes[0].token
         target = arbiter.shapes[1].token
         self >> messages.HitTarget(bullet, target)
-        if not bullet.player.targets and target.is_black_ball:
+        if not bullet.player.targets and target.is_final_target:
             self >> messages.EndGame(bullet.player)
 
     def on_hit_obstacle(self, space, arbiter):

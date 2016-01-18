@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import kxg, pymunk
-from vecrec import Vector
+from vecrec import Vector, cast_anything_to_vector
 
 class Player(kxg.Token):
 
@@ -28,7 +28,7 @@ class Player(kxg.Token):
         return bullet.mass <= self.arsenal
 
     @kxg.read_only
-    def can_not_shoot(self, bullet):
+    def cannot_shoot(self, bullet):
         return not self.can_shoot(bullet)
 
     def spend_arsenal(self, bullet):
@@ -52,8 +52,11 @@ class Cannon(kxg.Token):
         self.muzzle_speed = 100
 
     def __extend__(self):
-        from . import gui
-        return {gui.GuiActor: gui.CannonExtension}
+        from . import gui, ai
+        return {
+                gui.GuiActor: gui.CannonExtension,
+                ai.AiActor: ai.CannonExtension,
+        }
 
 
 class FieldObject(kxg.Token):
@@ -82,8 +85,11 @@ class FieldObject(kxg.Token):
 
     @property
     def position(self):
-        import vecrec
-        return vecrec.cast_anything_to_vector(self.body.position)
+        return cast_anything_to_vector(self.body.position)
+
+    @property
+    def velocity(self):
+        return cast_anything_to_vector(self.body.velocity)
 
     def on_add_to_world(self, world):
         self.shape.elasticity = world.elasticity_constant
@@ -130,7 +136,7 @@ class Target(FieldObject):
         return {gui.GuiActor: gui.TargetExtension}
 
     @property
-    def is_black_ball(self):
+    def is_final_target(self):
         return self.owner is None
 
     def on_remove_from_world(self):

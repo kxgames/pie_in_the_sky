@@ -14,8 +14,7 @@ class StartGame (kxg.Message):
         def random_position():
             return field.center + Vector.random(0.4*field.height)
         def random_velocity():
-            return Vector.null()
-            #return Vector.random(10)
+            return Vector.random(50)
 
         # Create a few obstacles in the same way.
 
@@ -47,19 +46,18 @@ class StartGame (kxg.Message):
                     tokens.Cannon(player, position))
 
             for j in range(targets_per_player):
-                x = field.width * 3 / 4
+                x = field.width * 2/3
                 y = field.height * (1 + i * targets_per_player + j) / (num_players * targets_per_player + 1)
                 target = tokens.Target(
                         Vector(x, y), random_velocity(), player)
                 self.targets.append(target)
 
-        # Create the black target
-        self.targets.append(
-                tokens.Target(
-                    Vector(field.width * 5/6, field.center_y),
-                    random_velocity(),
-                )
+        # Create the final target
+        self.final_target = tokens.Target(
+                Vector(field.width * 3/4, field.center_y),
+                random_velocity(),
         )
+        self.targets.append(self.final_target)
 
     def tokens_to_add(self):
         yield from self.targets
@@ -72,6 +70,7 @@ class StartGame (kxg.Message):
 
     def on_execute(self, world):
         world.targets = self.targets
+        world.final_target = self.final_target
         world.obstacles = self.obstacles
 
         for cannon in self.cannons:
@@ -115,7 +114,7 @@ class ShootBullet (kxg.Message):
         yield self.bullet
 
     def on_check(self, world):
-        if self.player.can_not_shoot(self.bullet):
+        if self.player.cannot_shoot(self.bullet):
             raise kxg.MessageCheck("player does not have enough bullet capacity.")
 
     def on_execute(self, world):
