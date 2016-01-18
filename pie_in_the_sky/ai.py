@@ -49,12 +49,12 @@ class CannonExtension (kxg.TokenExtension):
             # Aim in front of the target with some variance.
 
             aim = target.position - cannon.position
-            aim += target.velocity * 5
-            aim += 0.0 * aim.magnitude * Vector.random()
+            aim += 0.0 * target.velocity
+            aim += 0.05 * aim.magnitude * Vector.random()
             aim.normalize()
 
             velocity = cannon.muzzle_speed * aim
-            position = cannon.position + 40 * aim
+            position = cannon.position + 25 * aim
             bullet = tokens.Bullet(cannon, position, velocity)
 
             # Shoot unless we're out of bullets.
@@ -65,6 +65,6 @@ class CannonExtension (kxg.TokenExtension):
                 self.shot_timer /= 2
 
     def reset_shot_timer(self):
-        self.shot_timer = random.uniform(0.3, 1.0)
+        self.shot_timer = random.uniform(0.5, 1.5)
 
 
