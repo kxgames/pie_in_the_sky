@@ -61,8 +61,10 @@ class CannonExtension (kxg.TokenExtension):
 
             if player.can_shoot(bullet):
                 self.actor >> messages.ShootBullet(bullet)
+            else:
+                self.shot_timer /= 2
 
     def reset_shot_timer(self):
-        self.shot_timer = random.uniform(0.5, 2)
+        self.shot_timer = random.uniform(0.3, 1.0)
 
 

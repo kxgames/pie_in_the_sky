@@ -49,7 +49,7 @@ class Cannon(kxg.Token):
         super().__init__()
         self.player = player
         self.position = position
-        self.muzzle_speed = 100
+        self.muzzle_speed = 150
 
     def __extend__(self):
         from . import gui, ai
