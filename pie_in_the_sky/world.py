@@ -10,7 +10,7 @@ class World (kxg.World):
 
     field_size = 600, 400
     gravity_constant = 1e5
-    elasticity_constant = 0.95
+    elasticity_constant = 1
 
     def __init__(self):
         super().__init__()

@@ -25,14 +25,14 @@ class StartGame (kxg.Message):
                         random.randrange(field.bottom + 100, field.top - 100),
                     ),
                     Vector.random(10))
-                for i in range(1)
+                for i in range(2)
         ]
 
         # Create a cannon and several targets for each player and decide which 
         # side of the field each cannon should go on.
 
         self.targets = []
-        targets_per_player = 1
+        targets_per_player = 2
 
         players = world.players
         num_players = len(players)
@@ -53,6 +53,7 @@ class StartGame (kxg.Message):
                 self.targets.append(target)
 
         # Create the final target
+
         self.final_target = tokens.Target(
                 Vector(field.width * 3/4, field.center_y),
                 random_velocity(),
