@@ -127,7 +127,21 @@ class SyncWorlds (kxg.Message):
     """
     Synchronize game objects.
     """
-    pass
+
+    def __init__(self, world):
+        self.state = {
+                token: (token.position.xy, token.velocity.xy)
+                for token in world.field_objects
+        }
+
+    def on_check(self, world):
+        if not self.was_sent_by_referee():
+            raise kxg.MessageCheck('sync must be sent by referee')
+
+    def on_execute(self, world):
+        for token in self.state:
+            token.body.position, token.body.velocity = self.state[token]
+
 
 class HitSomething (kxg.Message):
 
