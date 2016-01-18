@@ -67,21 +67,10 @@ class FieldObject(kxg.Token):
     def __init__(self, position, velocity, mass=1, radius=20):
         super().__init__()
 
-        inertia = pymunk.moment_for_circle(mass, 0, radius, (0,0))
-        self.body = pymunk.Body(int(mass), inertia)
-        self.body.position = position.xy
-        self.body.velocity = velocity.xy
-        self.shape = pymunk.Circle(self.body, radius, (0,0))
-        self.shape.collision_type = self.collision_type
-        self.shape.token = self
-    
-    @property
-    def mass(self):
-        return int(self.body.mass)
-
-    @property
-    def radius(self):
-        return self.shape.radius
+        self._position = position
+        self._velocity = velocity
+        self.mass = int(mass)
+        self.radius = radius
 
     @property
     def position(self):
@@ -92,7 +81,14 @@ class FieldObject(kxg.Token):
         return cast_anything_to_vector(self.body.velocity)
 
     def on_add_to_world(self, world):
+        inertia = pymunk.moment_for_circle(self.mass, 0, self.radius, (0,0))
+        self.body = pymunk.Body(int(self.mass), inertia)
+        self.body.position = self._position.xy
+        self.body.velocity = self._velocity.xy
+        self.shape = pymunk.Circle(self.body, self.radius, (0,0))
+        self.shape.collision_type = self.collision_type
         self.shape.elasticity = world.elasticity_constant
+        self.shape.token = self
         world.space.add(self.body, self.shape)
 
     def on_remove_from_world(self):
