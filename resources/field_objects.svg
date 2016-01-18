@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284272"
-     inkscape:cx="-225.20763"
-     inkscape:cy="-29.08852"
+     inkscape:zoom="1"
+     inkscape:cx="-34.986344"
+     inkscape:cy="-10.75142"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -359,7 +359,7 @@
          style="opacity:1;fill:#eee8d5;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
     <circle
-       style="opacity:1;fill:#93a1a1;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#839496;fill-opacity:1;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path3340-5"
        cx="-31.162954"
        cy="1006.4505"
@@ -424,6 +424,14 @@
        transform="translate(-145.93742,1100.3871)"
        inkscape:transform-center-x="0.05528511"
        inkscape:transform-center-y="0.033363747"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <circle
+       style="opacity:1;fill:#586e75;fill-opacity:0.49462366;stroke:none;stroke-width:9;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path3336-7"
+       cx="41"
+       cy="982.36218"
+       r="5"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
   </g>
